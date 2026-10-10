@@ -1,7 +1,7 @@
 /* 英语闯关实验室 · Service Worker
    策略：network-first（保证拿到最新版），离线时回退缓存。
    改动页面后请把 VERSION 加 1，旧缓存会在 activate 时清掉。 */
-const VERSION = 'v5.0.0';
+const VERSION = 'v6.0.0';
 const CACHE = 'drive-english-' + VERSION;
 const ASSETS = [
   './',

@@ -278,6 +278,43 @@ h3{font-size:14px;margin:16px 0 8px}
 .coinbox b{font-size:16px;display:block}
 @media(min-width:520px){.options{grid-template-columns:repeat(4,1fr)}.opt{min-height:126px}
   .stages{grid-template-columns:repeat(3,1fr)}}
+
+/* ---------- v6：开车地图 ---------- */
+.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:520px){.mgrid{grid-template-columns:repeat(3,1fr)}}
+.mcard{position:relative;border:none;cursor:pointer;font-family:inherit;background:#fff;
+  border-radius:14px;padding:11px 10px 10px;text-align:left;box-shadow:var(--shadow);
+  transition:transform .14s;overflow:hidden;min-height:96px}
+.mcard:active{transform:scale(.96)}
+.mcard .sky{position:absolute;inset:0 0 auto 0;height:34px;opacity:.5}
+.mcard .em{font-size:29px;line-height:1;display:block;position:relative}
+.mcard .nm{font-size:12.5px;font-weight:800;margin-top:6px;display:block;position:relative;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mcard .cond{font-size:10.5px;font-weight:700;margin-top:3px;display:block;position:relative;color:#B8860B}
+.mcard.lock .em{filter:grayscale(1) opacity(.35)}
+.mcard.lock .nm{color:#B3A8B3}
+.mcard.lock .cond{color:#B3A8B3}
+.mcard.open{background:linear-gradient(135deg,#F4FFF8,#fff)}
+.mcard.clear::after{content:'🏁';position:absolute;top:6px;right:7px;font-size:14px}
+.mcard.playing{box-shadow:0 0 0 3px var(--yellow-deep),var(--shadow)}
+
+/* 驾驶台 */
+.drivewrap{position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);
+  background:#EAF3DE;touch-action:none;user-select:none}
+.drivewrap canvas{display:block;width:100%;height:auto}
+.dhud{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--glass);
+  backdrop-filter:blur(12px);border:1px solid var(--glass-b);border-radius:14px;
+  box-shadow:var(--shadow);margin-bottom:8px;font-size:12px;font-weight:700}
+.dhud .sp{flex:1;text-align:center;color:var(--text-light);font-weight:700}
+.dhud b{color:#B8860B}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.pad button{height:56px;border:none;border-radius:14px;background:var(--glass);
+  border:1px solid var(--glass-b);font-size:20px;font-family:inherit;cursor:pointer;
+  box-shadow:var(--shadow);color:var(--text);transition:transform .1s}
+.pad button:active{transform:scale(.93);background:var(--yellow)}
+.pad .mid{display:flex;align-items:center;justify-content:center;font-size:12px;
+  font-weight:800;color:var(--text-light);background:transparent;box-shadow:none;border:none}
+.dtip{font-size:11.5px;color:var(--text-light);text-align:center;margin-top:8px}
 @media(max-width:360px){.stages{grid-template-columns:1fr}}
 </style>
 </head>
@@ -285,7 +322,7 @@ h3{font-size:14px;margin:16px 0 8px}
 
 <div class="topbar">
   <div class="logo" id="logo">🦊</div>
-  <div class="who"><b>英语游戏实验室 <span style="font-weight:600;color:#B083D5">v5</span></b><span id="poolInfo">课程词库加载中…</span></div>
+  <div class="who"><b>英语闯关实验室 <span style="font-weight:600;color:#B083D5">v6</span></b><span id="poolInfo">课程词库加载中…</span></div>
   <div class="pill coin">🪙 <span id="pCoins">0</span></div>
   <div class="pill star">⭐ <span id="pStars">0</span></div>
 </div>
@@ -304,6 +341,7 @@ h3{font-size:14px;margin:16px 0 8px}
   <button class="tab on" data-g="home"><span class="ic">🏠</span>首页</button>
   <button class="tab" data-g="map"><span class="ic">🗺️</span>闯关</button>
   <button class="tab" data-g="garage"><span class="ic">🚗</span>车库</button>
+  <button class="tab" data-g="drive"><span class="ic">🛣️</span>开车</button>
   <button class="tab" data-g="list"><span class="ic">🔤</span>单词表</button>
 </nav>
 
@@ -311,7 +349,7 @@ h3{font-size:14px;margin:16px 0 8px}
 
 <script>
 /* =========================================================
-   英语游戏实验室 v5 · 单文件零依赖
+   英语闯关实验室 v6 · 单文件零依赖（v6 新增：10 张开车地图 · Canvas 驾驶收集）
    课程结构：100 个模块 = 原 M1–M8（教材已核）+ 新增 M9–M100
    级别：L1 启蒙 / L2 生活 / L3 场景 / L4 认知 / L5 进阶（每级 20 模块）
    v4 新增：闯关解锁 —— 本模块单词全部答对即通关，自动解锁下一关的模块和单词。
@@ -2080,7 +2118,7 @@ const KEY = 'drive_english_lab_v5';
 let S = load();
 
 function load(){
-  const base = {stars:0,xp:0,coins:0,log:{},scope:'',cleared:{},free:false,stages:{},garage:{},ride:0};
+  const base = {stars:0,xp:0,coins:0,log:{},scope:'',cleared:{},free:false,stages:{},garage:{},ride:0,maps:{}};
   try{
     const raw = localStorage.getItem(KEY);
     if(!raw) return base;
@@ -2092,6 +2130,7 @@ function load(){
             free:!!p.free,
             stages:(p.stages && typeof p.stages === 'object') ? p.stages : {},
             garage:(p.garage && typeof p.garage === 'object') ? p.garage : {},
+            maps:(p.maps && typeof p.maps === 'object') ? p.maps : {},
             ride:(rd >= 1 && rd <= 100 && p.garage && p.garage[rd]) ? rd : 0};
   }catch(e){ return base; }
 }
@@ -2676,10 +2715,103 @@ function buyRide(n){
   sfxWin();
   return {ok:true, msg:`🎉 ${r.icon.slice(0,4)==='svg:' ? '新车' : r.icon} ${r.name} 开回家啦！已设为座驾`};
 }
+/* 把已有的车设为当前座驾（只有已收集的车才能开） */
 function setRide(n){
   if(!rideOwned(n)) return false;
   S.ride = n; save(); paintTop();
   return true;
+}
+/* =========================================================
+   v6：开车地图（10 张 · 逐张解锁 · 用座驾在场景里收集单词星星）
+   解锁双条件：① 已通关模块数 ≥ need  ② 金币 ≥ price
+   ========================================================= */
+const MAPS = [
+  {id:1, name:'城市街道', em:'🏙️', need:1,  price:0,   sky:'#B5D4F4', road:'#B4B2A9', road2:'#F1EFE8',
+   ground:'#D3D1C7', deco:'🏢', pickups:8,  tip:'红绿灯与斑马线，先练手感'},
+  {id:2, name:'校园小路', em:'🏫', need:3,  price:120, sky:'#CECBF6', road:'#B4B2A9', road2:'#FFFFFF',
+   ground:'#EAF3DE', deco:'🌳', pickups:9,  tip:'操场和花坛，注意减速带'},
+  {id:3, name:'森林公园', em:'🌳', need:6,  price:200, sky:'#9FE1CB', road:'#97C459', road2:'#EAF3DE',
+   ground:'#C0DD97', deco:'🌲', pickups:10, tip:'绕开树桩，穿过小木桥'},
+  {id:4, name:'海滩公路', em:'🏖️', need:10, price:280, sky:'#85B7EB', road:'#FAC775', road2:'#FAEEDA',
+   ground:'#EF9F27', deco:'🌴', pickups:11, tip:'沙地会打滑，慢一点'},
+  {id:5, name:'雪山弯道', em:'❄️', need:15, price:360, sky:'#B5D4F4', road:'#E6F1FB', road2:'#FFFFFF',
+   ground:'#F1EFE8', deco:'🏔️', pickups:12, tip:'冰面滑行，提前打方向'},
+  {id:6, name:'沙漠公路', em:'🌵', need:25, price:440, sky:'#FAC775', road:'#EF9F27', road2:'#FAEEDA',
+   ground:'#F0997B', deco:'🌵', pickups:13, tip:'沙丘起伏，坦克在这最好开'},
+  {id:7, name:'赛车场',   em:'🏁', need:40, price:520, sky:'#F09595', road:'#5F5E5A', road2:'#FFFFFF',
+   ground:'#B4B2A9', deco:'🏁', pickups:14, tip:'跑道计时，一圈比一圈快'},
+  {id:8, name:'太空轨道', em:'🚀', need:60, price:600, sky:'#26215C', road:'#534AB7', road2:'#AFA9EC',
+   ground:'#3C3489', deco:'🪐', pickups:15, tip:'失重漂浮，飞机的主场'},
+  {id:9, name:'海底世界', em:'🌊', need:80, price:680, sky:'#85B7EB', road:'#1D9E75', road2:'#9FE1CB',
+   ground:'#0F6E56', deco:'🐠', pickups:16, tip:'水下推进，潜水艇才能下潜'},
+  {id:10,name:'云端龙巢', em:'🐉', need:100,price:800, sky:'#AFA9EC', road:'#CECBF6', road2:'#FFFFFF',
+   ground:'#EEEDFE', deco:'🌈', pickups:18, tip:'云海彩虹，终极地图'}
+];
+const MAP_BY_ID = {};
+MAPS.forEach(m => { MAP_BY_ID[m.id] = m; });
+const mapCleared = id => !!(S.maps && S.maps[id] && S.maps[id].done);
+const mapOwned   = id => !!(S.maps && S.maps[id] && S.maps[id].owned);
+const mapStarsOf = id => (S.maps && S.maps[id]) ? (S.maps[id].stars | 0) : 0;
+const mapBestOf  = id => (S.maps && S.maps[id]) ? (S.maps[id].best | 0) : 0;
+const mapsCleared = () => MAPS.filter(m => mapCleared(m.id)).length;
+/* 已通关模块数（地图门槛用这个，不纯看金币，免得在 M1 刷钱直接跳到第 10 张图） */
+function clearedForMap(){ return S.free ? MODULES.length : clearedCount(); }
+function mapCondMet(id){ return clearedForMap() >= MAP_BY_ID[id].need; }
+/* 前置条件（≠ 已解锁）：上一张跑通了 + 模块数够 */
+function mapReady(id){
+  if(id <= 1) return true;
+  if(S.free) return true;
+  const prev = MAP_BY_ID[id - 1];
+  return mapCleared(prev.id) && mapCondMet(id);
+}
+/* 真正能玩的地图：第 1 张免费；其余要么已花钱买过，要么家长模式 */
+function mapUnlocked(id){
+  if(id <= 1) return true;
+  if(S.free) return true;
+  return mapOwned(id);
+}
+/* 买地图：双条件（上一张通关 + 已通关模块数够）+ 金币 */
+function buyMap(id){
+  const mp = MAP_BY_ID[id];
+  if(!mp) return {ok:false, msg:'没有这张地图'};
+  if(mapUnlocked(id)) return {ok:false, msg:'这张地图已经能开啦'};
+  if(!mapCondMet(id)) return {ok:false, msg:`先通关 ${mp.need} 个模块才能解锁 ${mp.name} 哦～`};
+  const prev = MAP_BY_ID[id - 1];
+  if(prev && !mapCleared(prev.id)) return {ok:false, msg:`先把「${prev.name}」跑通关吧～`};
+  if(S.coins < mp.price) return {ok:false, msg:`还差 🪙 ${mp.price - S.coins} 金币，再闯几关吧！`};
+  S.coins -= mp.price;
+  if(!S.maps) S.maps = {};
+  if(!S.maps[id]) S.maps[id] = {done:false, owned:false, stars:0, best:0, plays:0};
+  S.maps[id].owned = true;
+  save(); paintTop();
+  sfxWin();
+  return {ok:true, msg:`🎉 解锁新地图：${mp.em} ${mp.name}！`};
+}
+/* 跑完一张图：记录最佳成绩 + 发金币（重跑只按成绩梯度补差，不重复刷） */
+function finishMapRun(id, got, total, elapsedSec){
+  if(!S.maps) S.maps = {};
+  const rec = S.maps[id] || (S.maps[id] = {done:false, stars:0, best:0, plays:0});
+  const ratio = total ? got / total : 0;
+  const stars = ratio >= 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
+  const gotAll = got >= total;
+  const coinGain = got * 3 + (gotAll ? 40 + id * 6 : 0);
+  const firstAll = gotAll && !rec.done;
+  rec.plays = (rec.plays | 0) + 1;
+  if(stars > (rec.stars | 0)) rec.stars = stars;
+  if(got > (rec.best | 0)) rec.best = got;
+  if(firstAll) rec.done = true;
+  /* 首通全额发；重跑按新纪录补差（防止刷同一张图） */
+  let actual = coinGain;
+  if(rec.paid === undefined) rec.paid = 0;
+  if(!firstAll){
+    const prevPaid = rec.paid | 0;
+    actual = Math.max(0, coinGain - prevPaid);
+  }
+  rec.paid = Math.max(rec.paid | 0, coinGain);
+  S.coins += actual;
+  save(); paintTop();
+  return {stars, got, total, gotAll, firstAll, coinGain, actual, elapsedSec,
+          unlockedNext: !!(MAP_BY_ID[id + 1]) && gotAll};
 }
 
 /* =========================================================
@@ -2784,10 +2916,12 @@ function sesResult(k){
         ${nextS ? `<button class="btn sm" id="rNext">第 ${nextS} 关 →</button>` : `<button class="btn sm" id="rFinish">完成本模块 →</button>`}
         <button class="btn sm ghost" id="rAgain">再玩一次</button>
         <button class="btn sm ghost" id="rMap">🗺️ 关卡地图</button>
+        <button class="btn sm ghost" id="rDrive">🛣️ 开车兜风</button>
         ${carReady ? `<button class="btn sm ghost" id="rGarage">🚗 去车库</button>` : ''}
       </div>`, (box, close) => {
     box.querySelector('#rAgain').addEventListener('click', () => { close(); startStage(k.m, k.s); });
     box.querySelector('#rMap').addEventListener('click', () => { close(); setScope('m' + k.m); go('map'); });
+    box.querySelector('#rDrive').addEventListener('click', () => { close(); go('drive'); });
     const gb = box.querySelector('#rGarage');
     if(gb) gb.addEventListener('click', () => { close(); go('garage'); });
     const nx = box.querySelector('#rNext');
@@ -2900,9 +3034,10 @@ function mountGarage(root){
       </div>
       <div class="sub" style="margin:10px 0 0">
         每通关一个模块（${STAGES_PER_MOD} 关全过）就解锁那辆专属交通工具，再用金币把它换回家。
-        点已收集的车可以设为座驾。
+        点已收集的车可以设为座驾，换好后就能开进 🛣️ 开车地图里兜风。
       </div>
       <div class="row" style="margin-top:12px">
+        <button class="btn sm" data-go-drive="1">🛣️ 开 ${riding ? riding.name : '我的车'} 去兜风</button>
         ${[['all',`全部 ${RIDES.length}`],['own',`✅ 已收集 ${owned}`],
            ['buy',`🪙 可兑换 ${RIDES.filter(r => rideUnlocked(r.n) && !rideOwned(r.n)).length}`],
            ['lock',`🔒 未解锁 ${RIDES.filter(r => !rideUnlocked(r.n)).length}`]]
@@ -2919,6 +3054,8 @@ function mountGarage(root){
   root.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => {
     garageFilter = b.dataset.f; mountGarage(root);
   }));
+  const db = root.querySelector('[data-go-drive]');
+  if(db) db.addEventListener('click', () => go('drive'));
   root.querySelectorAll('[data-ride]').forEach(b => b.addEventListener('click', () => {
     const n = Number(b.dataset.ride);
     const r = RIDE_BY_N[n];
@@ -2948,6 +3085,478 @@ function vcard(r){
     </button>`;
 }
 
+
+/* =========================================================
+   v6：地图车库页 🛣️
+   ========================================================= */
+function mountDrive(root){
+  const riding = RIDE_BY_N[S.ride] || null;
+  const open = ownedCount();
+  const ridingLine = riding
+    ? `正在开：<b>${riding.name}</b>（M${riding.n}）`
+    : `还没选座驾，去车库换一辆吧`;
+  root.innerHTML = `
+    <div class="card">
+      <h2>🛣️ 开车地图</h2>
+      <div class="sub">
+        换来的车可以开进地图兜风 —— 撞到路上的<b>单词星星</b>就会读出英文和中文，
+        顺便把单词练了。已解锁 <b>${mapsCleared()}</b>/${MAPS.length} 张地图 · 已通关
+        <b>${clearedForMap()}</b> 个模块 · 🪙 <b>${S.coins}</b>
+      </div>
+      <div class="row">
+        ${riding ? `<button class="btn sm" data-drive="${[...MAPS].reverse().find(m => mapUnlocked(m.id))?.id || 1}">
+          ${iconHTML(riding.icon, 'ic2', riding.hue ? `filter:hue-rotate(${riding.hue}deg)` : '')} 开我的${riding.name}去兜风</button>`
+        : `<button class="btn sm ghost" data-go-garage="1">🚗 先去车库挑一辆车</button>`}
+      </div>
+      <div class="dtip">${ridingLine}${open ? ` · 车库已有 ${open} 辆` : ''}</div>
+    </div>
+
+    <div class="card">
+      <h2>${MAPS.length} 张地图</h2>
+      <div class="mgrid">
+        ${MAPS.map(mp => {
+          const isOpen = mapUnlocked(mp.id);
+          const isClear = mapCleared(mp.id);
+          const ready = mapReady(mp.id);
+          const cls = 'mcard' + (isOpen ? ' open' : ' lock') + (isClear ? ' clear' : '');
+          const cond = isOpen
+            ? (isClear ? `🏁 已通关 · ⭐ ${mapStarsOf(mp.id)}` : `🪙 ${mp.price} · 点击开跑`)
+            : ready ? `🪙 ${mp.price} 金币解锁`
+                    : `🔒 通关 ${mp.need} 个模块`;
+          return `<button class="${cls}" data-map="${mp.id}">
+              <span class="sky" style="background:${mp.sky}"></span>
+              <span class="em">${isOpen ? mp.em : '🔒'}</span>
+              <span class="nm">${mp.id}. ${mp.name}</span>
+              <span class="cond">${cond}</span>
+            </button>`;
+        }).join('')}
+      </div>
+      <div class="dtip" style="text-align:left;margin-top:10px">
+        🔓 解锁规则：<b>先跑通上一张地图</b>，并且<b>已通关模块数</b>达到要求，再花金币买票。
+        这样孩子不会在 M1 刷够钱就跳到第 10 张图。
+      </div>
+    </div>`;
+
+  root.querySelectorAll('[data-map]').forEach(b => b.addEventListener('click', () => {
+    const id = Number(b.dataset.map);
+    if(mapUnlocked(id)){ startMapRun(id); return; }
+    if(!mapCondMet(id)){ toast(`先通关 ${MAP_BY_ID[id].need} 个模块才能解锁 ${MAP_BY_ID[id].name} 哦～`); return; }
+    const prev = MAP_BY_ID[id - 1];
+    if(prev && !mapCleared(prev.id)){ toast(`先把「${prev.name}」跑通关吧～`); return; }
+    const r = buyMap(id);
+    toast(r.msg);
+    if(r.ok){ sfxWin(); paintTop(); setTimeout(() => mountDrive(root), 600); }
+    else mountDrive(root);
+  }));
+  root.querySelectorAll('[data-drive]').forEach(b => b.addEventListener('click', () => {
+    startMapRun(Number(b.dataset.drive));
+  }));
+  const gb = root.querySelector('[data-go-garage]');
+  if(gb) gb.addEventListener('click', () => go('garage'));
+}
+
+/* =========================================================
+   v6：驾驶引擎（Canvas 俯视 2D）
+   目标：撞齐路上所有「单词星星」→ 开回起点 → 通关 + 金币
+   ========================================================= */
+const DRIVE = {
+  id:1, raf:0, t:0, last:0, keys:{}, joy:{x:0,y:0}, phase:'idle',
+  car:{x:0,y:0,a:0,v:0,steer:0}, pickups:[], got:0, w:0, h:0,
+  startedAt:0, decos:[], obstacles:[], bound:{w:0,h:0}, hand:{x:0,y:0}
+};
+let driveRAF = 0;
+
+/* 把地图 + 座驾渲染成一个小 SVG 图标，用于结算层/卡片 */
+function carBadge(ride, size){
+  const s = size || 34;
+  if(!ride) return `<span style="font-size:${s}px">🚗</span>`;
+  const hue = ride.hue ? `filter:hue-rotate(${ride.hue}deg);` : '';
+  if(ride.icon.slice(0,4) === 'svg:'){
+    return `<span style="display:inline-block;width:${s * 1.7}px;height:${s}px;${hue}">${SVG_ICON[ride.icon.slice(4)] || ''}</span>`;
+  }
+  return `<span style="font-size:${s}px;${hue}">${ride.icon}</span>`;
+}
+
+/* 世界比屏幕大：车在里面跑，镜头跟着走 */
+const DRIVE_WORLD_W = 900, DRIVE_WORLD_H = 1300;
+
+function startMapRun(id){
+  if(!S.ride || !rideOwned(S.ride)){
+    toast('先去车库换一辆车，才能开车兜风哦～');
+    go('garage');
+    return;
+  }
+  DRIVE.id = id;
+  DRIVE.phase = 'ready';
+  DRIVE.got = 0;
+  DRIVE.t = 0;
+  DRIVE.startedAt = 0;
+  DRIVE.keys = {}; DRIVE.joy = {x:0,y:0};
+  buildMapWorld(id);
+  go('drive-run');
+}
+function buildMapWorld(id){
+  const mp = MAP_BY_ID[id];
+  const pool = unlockedWords();
+  const words = shuffle(pool.length >= mp.pickups ? pool : WORDS).slice(0, mp.pickups);
+  const W = DRIVE_WORLD_W, H = DRIVE_WORLD_H;
+  /* 沿路撒星星：用一条环状路线，均匀分布 */
+  const n = words.length;
+  const cx = W / 2, cy = H / 2, rx = W * 0.34, ry = H * 0.38;
+  DRIVE.pickups = words.map((w, i) => {
+    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+    const jitter = (i % 2 ? 1 : -1) * (18 + (i % 3) * 9);
+    return {
+      id: 'mp' + i, w,
+      x: cx + Math.cos(a) * (rx + jitter),
+      y: cy + Math.sin(a) * (ry + jitter),
+      r: 26, hit: false, pulse: Math.random() * Math.PI * 2
+    };
+  });
+  /* 装饰物（不挡路，纯氛围） */
+  DRIVE.decos = [];
+  for(let i = 0; i < 26; i++){
+    DRIVE.decos.push({
+      x: 40 + Math.random() * (W - 80),
+      y: 40 + Math.random() * (H - 80),
+      em: mp.deco, s: 22 + Math.random() * 16, rot: (Math.random() - .5) * .5
+    });
+  }
+  /* 障碍：沙丘 / 冰面这类做成"减速带"而不是硬墙，避免小孩卡住 */
+  DRIVE.bound = {w: W, h: H};
+  DRIVE.car = {x: cx, y: cy + ry + 120, a: -Math.PI / 2, v: 0, steer: 0};
+  DRIVE.home = {x: cx, y: cy + ry + 120, r: 40};
+  DRIVE.w = W; DRIVE.h = H;
+}
+
+function mountDriveRun(root){
+  const mp = MAP_BY_ID[DRIVE.id];
+  const car = RIDE_BY_N[S.ride] || null;
+  root.innerHTML = `
+    <div class="dhud">
+      <span>${mp.em} ${mp.name}</span>
+      <span class="sp" id="dGot">星星 <b>0</b>/${DRIVE.pickups.length}</span>
+      <span id="dTime">⏱ 0.0s</span>
+    </div>
+    <div class="drivewrap" id="dWrap">
+      <canvas id="dCanvas"></canvas>
+    </div>
+    <div class="pad">
+      <button data-dir="up">⬆️</button>
+      <button class="mid" data-horn="1">📣</button>
+      <button data-dir="down">⬇️</button>
+      <button data-dir="left">↩️</button>
+      <button class="mid" id="dExit">退出</button>
+      <button data-dir="right">↪️</button>
+    </div>
+    <div class="dtip">收集全部 <b>${DRIVE.pickups.length}</b> 颗单词星星，再开回 <b>🏠 起点</b> 就通关。
+      撞到星星会读出声音，跟着念一遍吧！</div>`;
+
+  const cv = root.querySelector('#dCanvas');
+  const wrap = root.querySelector('#dWrap');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cssW = Math.min(wrap.clientWidth || 380, 560);
+  const cssH = Math.round(cssW * 1.05);
+  cv.width = Math.round(cssW * dpr);
+  cv.height = Math.round(cssH * dpr);
+  cv.style.width = cssW + 'px';
+  cv.style.height = cssH + 'px';
+  DRIVE.ctx = cv.getContext('2d');
+  DRIVE.dpr = dpr; DRIVE.cw = cssW; DRIVE.ch = cssH;
+  DRIVE.phase = 'play';
+  DRIVE.startedAt = performance.now();
+
+  /* 键盘 */
+  DRIVE.keyHandler = e => {
+    const k = e.key.toLowerCase();
+    const map = {arrowup:'up', w:'up', arrowdown:'down', s:'down', arrowleft:'left', a:'left', arrowright:'right', d:'right'};
+    if(map[k]){ DRIVE.keys[map[k]] = true; e.preventDefault(); }
+  };
+  DRIVE.keyUp = e => {
+    const k = e.key.toLowerCase();
+    const map = {arrowup:'up', w:'up', arrowdown:'down', s:'down', arrowleft:'left', a:'left', arrowright:'right', d:'right'};
+    if(map[k]){ DRIVE.keys[map[k]] = false; e.preventDefault(); }
+  };
+  window.addEventListener('keydown', DRIVE.keyHandler);
+  window.addEventListener('keyup', DRIVE.keyUp);
+
+  /* 触屏方向键 */
+  root.querySelectorAll('[data-dir]').forEach(b => {
+    const d = b.dataset.dir;
+    const on = e => { e.preventDefault(); DRIVE.keys[d] = true; };
+    const off = e => { e.preventDefault(); DRIVE.keys[d] = false; };
+    b.addEventListener('pointerdown', on);
+    b.addEventListener('pointerup', off);
+    b.addEventListener('pointercancel', off);
+    b.addEventListener('pointerleave', off);
+  });
+  root.querySelector('[data-horn]').addEventListener('click', () => { sfxHonk(); });
+  root.querySelector('#dExit').addEventListener('click', () => quitDriveRun());
+  window.addEventListener('blur', () => { DRIVE.keys = {}; });
+
+  cancelAnimationFrame(driveRAF);
+  DRIVE.last = performance.now();
+  driveRAF = requestAnimationFrame(driveLoop);
+}
+
+function driveLoop(now){
+  const dt = Math.min((now - DRIVE.last) / 1000, 0.05);
+  DRIVE.last = now;
+  if(DRIVE.phase !== 'play') return;
+  DRIVE.t += dt;
+  stepDrive(dt);
+  renderDrive();
+  const g = document.getElementById('dGot');
+  if(g) g.innerHTML = `星星 <b>${DRIVE.got}</b>/${DRIVE.pickups.length}`;
+  const tm = document.getElementById('dTime');
+  if(tm) tm.textContent = '⏱ ' + ((now - DRIVE.startedAt) / 1000).toFixed(1) + 's';
+  driveRAF = requestAnimationFrame(driveLoop);
+}
+
+function stepDrive(dt){
+  const mp = MAP_BY_ID[DRIVE.id];
+  const c = DRIVE.car;
+  const K = DRIVE.keys;
+  const up = !!(K.up), down = !!(K.down), left = !!(K.left), right = !!(K.right);
+  /* 油门 / 倒车 */
+  const acc = up ? 260 : 0;
+  const brake = down ? 300 : 0;
+  if(up) c.v += acc * dt;
+  else if(down) c.v -= brake * dt;
+  else c.v *= (1 - 1.6 * dt);                 /* 自然减速 */
+  /* 不同地图有不同摩擦（沙地滑、冰面滑） */
+  const grip = mp.id === 4 ? 0.9 : mp.id === 5 ? 0.6 : 1.5;
+  if(!up && !down) c.v *= (1 - (grip - 1) * dt * 0.8);
+  c.v = Math.max(-150, Math.min(300, c.v));
+  /* 转向：速度越快转得越钝，像真车 */
+  const steerRate = 2.4 * (0.35 + Math.min(Math.abs(c.v) / 220, 1) * 0.65);
+  if(left)  c.steer -= steerRate * dt * 3;
+  if(right) c.steer += steerRate * dt * 3;
+  c.steer *= (1 - 3.2 * dt);
+  c.steer = Math.max(-1, Math.min(1, c.steer));
+  c.a += c.steer * dt * 3.2 * (c.v >= 0 ? 1 : -1);
+  c.x += Math.cos(c.a) * c.v * dt;
+  c.y += Math.sin(c.a) * c.v * dt;
+  /* 边界：世界边界软回弹 */
+  const pad = 34;
+  if(c.x < pad){ c.x = pad; c.v *= 0.5; }
+  if(c.x > DRIVE.bound.w - pad){ c.x = DRIVE.bound.w - pad; c.v *= 0.5; }
+  if(c.y < pad){ c.y = pad; c.v *= 0.5; }
+  if(c.y > DRIVE.bound.h - pad){ c.y = DRIVE.bound.h - pad; c.v *= 0.5; }
+  /* 撞星星 */
+  for(const p of DRIVE.pickups){
+    if(p.hit) continue;
+    const d = Math.hypot(p.x - c.x, p.y - c.y);
+    if(d < p.r + 20){
+      p.hit = true; DRIVE.got++;
+      speak(p.w.en);
+      sfxRight();
+      toast(`${p.w.emoji} ${p.w.en} — ${p.w.zh}`);
+      record(p.w.id, p.w.en, true);
+      if(DRIVE.got >= DRIVE.pickups.length){
+        DRIVE.phase = 'return';
+        toast('全部收齐！开回 🏠 起点就通关 🏁');
+        sfxWin();
+      }
+    }
+  }
+  /* 回起点落定 */
+  if(DRIVE.phase === 'return'){
+    const d = Math.hypot(DRIVE.home.x - c.x, DRIVE.home.y - c.y);
+    if(d < DRIVE.home.r + 16 && Math.abs(c.v) < 120){
+      DRIVE.phase = 'done';
+      const secs = (performance.now() - DRIVE.startedAt) / 1000;
+      const res = finishMapRun(DRIVE.id, DRIVE.got, DRIVE.pickups.length, secs);
+      cancelAnimationFrame(driveRAF);
+      setTimeout(() => mapResult(res), 260);
+    }
+  }
+}
+
+function renderDrive(){
+  const ctx = DRIVE.ctx;
+  if(!ctx) return;
+  const mp = MAP_BY_ID[DRIVE.id];
+  const c = DRIVE.car;
+  const dpr = DRIVE.dpr, cw = DRIVE.cw, ch = DRIVE.ch;
+  /* 镜头：以车为中心，限制在世界范围内 */
+  const camX = Math.max(cw / 2, Math.min(DRIVE.bound.w - cw / 2, c.x));
+  const camY = Math.max(ch / 2, Math.min(DRIVE.bound.h - ch / 2, c.y));
+  const ox = cw / 2 - camX, oy = ch / 2 - camY;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, cw, ch);
+  /* 背景地面 */
+  ctx.fillStyle = mp.ground;
+  ctx.fillRect(0, 0, cw, ch);
+
+  ctx.save();
+  ctx.translate(ox, oy);
+  /* 道路：环状跑道 */
+  const W = DRIVE.bound.w, H = DRIVE.bound.h;
+  ctx.strokeStyle = mp.road;
+  ctx.lineWidth = 92;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.ellipse(W / 2, H / 2, W * 0.34, H * 0.38, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  /* 路中间虚线 */
+  ctx.strokeStyle = mp.road2;
+  ctx.lineWidth = 4;
+  ctx.setLineDash([20, 18]);
+  ctx.beginPath();
+  ctx.ellipse(W / 2, H / 2, W * 0.34, H * 0.38, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  /* 装饰 */
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for(const d of DRIVE.decos){
+    ctx.save();
+    ctx.translate(d.x, d.y);
+    ctx.rotate(d.rot);
+    ctx.globalAlpha = 0.85;
+    ctx.font = d.s + 'px serif';
+    ctx.fillText(d.em, 0, 0);
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+
+  /* 起点 */
+  const hm = DRIVE.pickups.length ? DRIVE.home : DRIVE.home;
+  ctx.beginPath();
+  ctx.arc(hm.x, hm.y, hm.r, 0, Math.PI * 2);
+  ctx.fillStyle = DRIVE.phase === 'return' ? 'rgba(255,201,60,.55)' : 'rgba(255,255,255,.6)';
+  ctx.fill();
+  ctx.strokeStyle = '#B8860B';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.font = '26px serif';
+  ctx.fillText('🏠', hm.x, hm.y + 1);
+
+  /* 单词星星 */
+  for(const p of DRIVE.pickups){
+    if(p.hit) continue;
+    p.pulse += 0.07;
+    const s = 1 + Math.sin(p.pulse) * 0.07;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.scale(s, s);
+    ctx.beginPath();
+    ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    ctx.fill();
+    ctx.strokeStyle = '#FFC93C';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.font = '24px serif';
+    ctx.fillText(p.w.emoji, 0, -1);
+    ctx.font = '700 11px -apple-system,sans-serif';
+    ctx.fillStyle = '#5A4A5A';
+    ctx.fillText(p.w.en.length > 8 ? p.w.en.slice(0, 8) : p.w.en, 0, p.r + 11);
+    ctx.restore();
+  }
+
+  /* 车身：直接用 emoji / SVG 图标画在 canvas 上 */
+  const ride = RIDE_BY_N[S.ride];
+  ctx.save();
+  ctx.translate(c.x, c.y);
+  ctx.rotate(c.a + Math.PI / 2);
+  if(ride){
+    if(ride.icon.slice(0,4) === 'svg:'){
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(-16, -20, 32, 40, 8) : ctx.rect(-16, -20, 32, 40);
+      ctx.fillStyle = '#84936C';
+      ctx.fill();
+      ctx.strokeStyle = '#4C5740';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }else{
+      if(hue) ctx.filter = `hue-rotate(${ride.hue}deg)`;
+      ctx.font = '40px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ride.icon, 0, 0);
+      ctx.filter = 'none';
+    }
+  }
+  ctx.restore();
+  ctx.restore();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  /* 小地图（右上, 常驻不随镜头） */
+  const mw = 78, mh = mw * (H / W);
+  const mx = cw - mw - 10, my = 10;
+  ctx.fillStyle = 'rgba(255,255,255,.72)';
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(mx, my, mw, mh, 8) : ctx.rect(mx, my, mw, mh);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,.12)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  const sx = mw / W, sy = mh / H;
+  ctx.strokeStyle = mp.road;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.ellipse(mx + mw / 2, my + mh / 2, W * 0.34 * sx, H * 0.38 * sy, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#FFC93C';
+  for(const p of DRIVE.pickups){
+    if(p.hit) continue;
+    ctx.beginPath();
+    ctx.arc(mx + p.x * sx, my + p.y * sy, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#D85A30';
+  ctx.beginPath();
+  ctx.arc(mx + c.x * sx, my + c.y * sy, 3.2, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function quitDriveRun(){
+  cancelAnimationFrame(driveRAF);
+  DRIVE.phase = 'idle';
+  window.removeEventListener('keydown', DRIVE.keyHandler);
+  window.removeEventListener('keyup', DRIVE.keyUp);
+  go('drive');
+}
+function mapResult(res){
+  const mp = MAP_BY_ID[DRIVE.id];
+  const car = RIDE_BY_N[S.ride];
+  const nextMp = MAP_BY_ID[DRIVE.id + 1];
+  const canNext = nextMp && mapCondMet(nextMp.id);
+  showMask(`
+      <div class="big">${res.gotAll ? '🏁' : '🚗'}</div>
+      <h2>${res.gotAll ? `${mp.name} 通关！` : `${mp.name} 跑完啦`}</h2>
+      <div class="stars">${[0,1,2].map(i => `<span class="${i < res.stars ? '' : 'off'}">⭐</span>`).join('')}</div>
+      <div class="sub" style="margin:6px 0 0">
+        收集 <b>${res.got}/${res.total}</b> 颗单词星星 · 用时 <b>${res.elapsedSec.toFixed(1)}s</b>
+        ${car ? ` · 座驾 ${carBadge(car, 26)}` : ''}
+      </div>
+      <div class="coinrow">
+        <div class="coinbox">本次赚到<b>🪙 ${res.actual}</b></div>
+        <div class="coinbox">金币余额<b>🪙 ${S.coins}</b></div>
+        ${mapBestOf(DRIVE.id) ? `<div class="coinbox">最佳纪录<b>${mapBestOf(DRIVE.id)} 颗</b></div>` : ''}
+      </div>
+      ${res.gotAll && nextMp
+        ? `<div class="unlock">🔓 下一张地图：${nextMp.em} <b>${nextMp.name}</b><br>
+            <span>${canNext ? `🪙 ${nextMp.price} 金币可解锁` : `还需要通关 ${nextMp.need} 个模块`}</span></div>`
+        : ''}
+      ${res.gotAll ? '' : `<div class="sub" style="margin:8px 0 0">💡 星星没集齐也能赚金币，再跑一次试试全收！</div>`}
+      <div class="row">
+        <button class="btn sm" id="mAgain">再跑一次</button>
+        ${nextMp && canNext && res.gotAll ? `<button class="btn sm" id="mNext">下一张地图 →</button>` : ''}
+        <button class="btn sm ghost" id="mBack">🛣️ 回到地图</button>
+      </div>`, (box, close) => {
+    box.querySelector('#mAgain').addEventListener('click', () => { close(); startMapRun(DRIVE.id); });
+    box.querySelector('#mBack').addEventListener('click', () => { close(); quitDriveRun(); });
+    const nx = box.querySelector('#mNext');
+    if(nx) nx.addEventListener('click', () => { close(); startMapRun(DRIVE.id + 1); });
+  });
+}
+function sfxHonk(){ tone(440, .12, 0, .1, 'square'); tone(554, .16, .1, .09, 'square'); }
 
 /* =========================================================
    v5：关卡会话调度（按玩法 key 挂载对应游戏）
@@ -3415,7 +4024,7 @@ function mountHome(root){
 
   root.innerHTML = `
     <div class="card">
-      <h2>🏠 英语游戏实验室 v5</h2>
+      <h2>🏠 英语闯关实验室 v6</h2>
       <div class="sub">
         <b>${MODULES.length}</b> 个模块 × <b>${STAGES_PER_MOD}</b> 关 × <b>${GAMES.length}</b> 种玩法，
         共 <b>${WORDS.length}</b> 词 + <b>${SENTENCES.length}</b> 句。
@@ -3425,14 +4034,18 @@ function mountHome(root){
         <div class="coinbox">金币<b>🪙 ${S.coins}</b></div>
         <div class="coinbox">星星<b>⭐ ${allStars()}</b></div>
         <div class="coinbox">车库<b>🚗 ${ownedCount()}/${RIDES.length}</b></div>
+        <div class="coinbox">地图<b>🛣️ ${mapsCleared()}/${MAPS.length}</b></div>
       </div>
       <div class="row">
         <button class="btn" data-go="map">🗺️ 继续闯关：M${cur} 第 ${sNext} 关</button>
         <button class="btn ghost" data-go="garage">🚗 去车库</button>
+        <button class="btn ghost" data-go="drive">🛣️ 开车兜风</button>
         <button class="btn ghost" data-go="list">🔤 单词表</button>
       </div>
       <div class="sub" style="margin:12px 0 0">
-        ${riding ? `🚗 当前座驾：<b>${riding.name}</b>（换车去车库点一下就行）` : '🚗 还没有座驾 —— 通关一个模块后去车库换一辆吧'}
+        ${riding ? `🚗 当前座驾：<b>${riding.name}</b>（换车去车库点一下就行）`
+                 : '🚗 还没有座驾 —— 通关一个模块后去车库换一辆吧'}
+        ${ownedCount() ? `<br>🛣️ 换来的车能开进地图兜风，撞到路上的单词星星会读出英文和中文，顺便把单词练了。` : ''}
       </div>
     </div>
 
@@ -3659,8 +4272,17 @@ function go(name){
   if(name === 'home') mountHome(root);
   else if(name === 'map') mountMap(root);
   else if(name === 'garage') mountGarage(root);
+  else if(name === 'drive') mountDrive(root);
+  else if(name === 'drive-run') mountDriveRun(root);
   else if(name === 'list') mountList(root);
   else if(name === 'play') mountSession();
+  /* 离开驾驶页就把动画和键盘监听彻底停掉，免得后台空转 */
+  if(name !== 'drive-run' && DRIVE.phase !== 'idle'){
+    cancelAnimationFrame(driveRAF);
+    DRIVE.phase = 'idle';
+    window.removeEventListener('keydown', DRIVE.keyHandler);
+    window.removeEventListener('keyup', DRIVE.keyUp);
+  }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.g)));

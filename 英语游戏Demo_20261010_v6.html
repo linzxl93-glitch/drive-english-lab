@@ -1,0 +1,4314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>英语闯关实验室 · 100 模块 × 10 关 · 金币换车车</title>
+<meta name="description" content="儿童英语闯关游戏：100 个模块 × 10 个游戏关卡，1036 个单词；答对赚金币，通关解锁专属交通工具。单文件零依赖，可离线玩。">
+<meta name="theme-color" content="#FFB5BA">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="英语闯关">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="英语闯关实验室 · 100 模块 × 10 关">
+<meta property="og:description" content="儿童英语闯关游戏：答对赚金币，通关解锁专属交通工具。">
+<meta property="og:image" content="icon-512.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --pink:#FFB5BA;--blue:#A8D8F0;--yellow:#FFE5A0;--green:#B8E6C8;--purple:#D5B8E6;
+  --pink-deep:#FF8A95;--blue-deep:#6FBCDB;--yellow-deep:#FFC93C;--green-deep:#6FCB8A;--purple-deep:#B083D5;
+  --text:#5A4A5A;--text-light:#9A8A9A;
+  --glass:rgba(255,255,255,.58);--glass-b:rgba(255,255,255,.8);
+  --shadow:0 4px 20px rgba(0,0,0,.07);
+  --tap:58px;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:linear-gradient(135deg,#FFF0F3 0%,#F0F8FF 25%,#FFFDE8 50%,#F0FFF4 75%,#F5F0FF 100%);
+  background-attachment:fixed;color:var(--text);min-height:100vh;
+  padding:10px 12px 96px;max-width:760px;margin:0 auto;-webkit-font-smoothing:antialiased;
+}
+/* ---------- 顶部 ---------- */
+.topbar{display:flex;align-items:center;gap:9px;padding:9px 13px;
+  background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--glass-b);
+  border-radius:18px;box-shadow:var(--shadow);position:sticky;top:8px;z-index:50}
+.topbar .logo{font-size:21px;line-height:1}
+.topbar .who{flex:1;min-width:0}
+.topbar .who b{display:block;font-size:14.5px;letter-spacing:.2px}
+.topbar .who span{font-size:11px;color:var(--text-light)}
+.pill{display:flex;align-items:center;gap:3px;font-size:13.5px;font-weight:700;
+  padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.75)}
+.pill.star{color:#C99700}.pill.xp{color:var(--purple-deep)}
+.pill.coin{color:#B8860B;background:linear-gradient(135deg,#FFF6DA,#FFE9B0);
+  box-shadow:inset 0 0 0 1px rgba(184,134,11,.18)}
+.pill.ride{padding:4px 8px;font-size:17px;background:rgba(255,255,255,.75)}
+/* 自绘 SVG 载具（坦克 / 装甲车 / 潜水艇…）与 emoji 混排时的尺寸对齐 */
+.ridesvg{display:inline-block;line-height:1}
+.ridesvg svg{width:1.5em;height:.9em;display:inline-block;vertical-align:-.08em}
+.topbar .logo svg{width:30px;height:18px;display:block}
+.opt.gone{visibility:hidden}
+/* ---------- 课程范围选择器（两级） ---------- */
+.scope{position:sticky;top:74px;z-index:49;margin:10px 0 12px;padding:9px 10px;
+  background:rgba(255,255,255,.72);backdrop-filter:blur(14px);border:1px solid var(--glass-b);
+  border-radius:16px;box-shadow:var(--shadow)}
+.scope .lbl{font-size:10.5px;color:var(--text-light);font-weight:700;margin:0 0 7px 3px;
+  letter-spacing:.4px}
+.scope .chips + .chips{margin-top:7px}
+.prog{height:7px;border-radius:999px;background:rgba(0,0,0,.07);overflow:hidden;margin:8px 3px 0}
+.prog i{display:block;height:100%;width:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--green-deep),var(--blue-deep));transition:width .45s}
+.lb2{font-size:10.5px;font-weight:800;color:var(--purple-deep);margin:7px 3px 7px;letter-spacing:.3px}
+.lb2 b{color:var(--text)}
+.scope .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.scope .chips::-webkit-scrollbar{display:none}
+.schip{flex:0 0 auto;border:none;cursor:pointer;font-family:inherit;font-weight:700;
+  font-size:12.5px;color:var(--text);background:#fff;border-radius:999px;
+  padding:8px 13px;min-height:36px;box-shadow:0 2px 8px rgba(0,0,0,.06);white-space:nowrap;
+  transition:background .15s}
+.schip.on{background:linear-gradient(135deg,var(--purple-deep),var(--pink-deep));color:#fff}
+.schip i{font-style:normal;opacity:.65;font-size:11px;margin-left:3px}
+.schip.mini{font-size:11.5px;padding:7px 11px;min-height:32px;background:rgba(255,255,255,.86)}
+.schip.mini.on{background:linear-gradient(135deg,#6FBCDB,#6FCB8A);color:#fff}
+.schip.mini b{font-weight:800;margin-right:3px}
+/* 未解锁：变灰、不可点（点了会提示先过前一关） */
+.schip.lock{background:rgba(255,255,255,.5);color:#B3A8B3;box-shadow:none;cursor:default}
+.schip.lock.mini{background:rgba(255,255,255,.45)}
+/* ---------- 说明条 ---------- */
+.note{font-size:11.5px;line-height:1.65;color:var(--text-light);background:rgba(255,255,255,.5);
+  border:1px dashed rgba(0,0,0,.09);border-radius:14px;padding:9px 12px;margin-bottom:13px}
+.note b{color:var(--text)}
+/* ---------- 卡片 ---------- */
+.card{background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--glass-b);
+  border-radius:22px;box-shadow:var(--shadow);padding:18px;margin-bottom:13px}
+h2{font-size:19px;margin-bottom:4px}
+h3{font-size:14px;margin:16px 0 8px}
+.sub{font-size:12.5px;color:var(--text-light);margin-bottom:14px;line-height:1.6}
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:700;color:#fff;
+  border-radius:999px;min-height:var(--tap);padding:0 22px;font-size:15.5px;
+  background:linear-gradient(135deg,var(--purple-deep),var(--pink-deep));
+  box-shadow:0 6px 16px rgba(176,131,213,.32);transition:transform .12s}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:#fff;color:var(--text);box-shadow:var(--shadow)}
+.btn.sm{min-height:44px;padding:0 17px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.center{text-align:center}
+/* ---------- 选项 ---------- */
+.prompt{text-align:center;margin:6px 0 14px}
+.prompt .big{font-size:52px;line-height:1.1;margin-bottom:6px}
+.prompt .q{font-size:14px;color:var(--text-light)}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.opt{position:relative;cursor:pointer;border:none;font-family:inherit;
+  background:#fff;border-radius:20px;box-shadow:var(--shadow);
+  min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;transition:transform .12s,box-shadow .2s,outline-color .2s;outline:3px solid transparent}
+.opt:active{transform:scale(.96)}
+.opt .e{font-size:41px;line-height:1;font-weight:800}
+.opt .t{font-size:12px;color:var(--text-light)}
+.opt.right{outline-color:var(--green-deep);box-shadow:0 0 0 6px rgba(111,203,138,.22),var(--shadow)}
+.opt.wrong{outline-color:var(--pink-deep);animation:shake .4s}
+.opt.hint{outline-color:var(--yellow-deep);animation:pulse 1.1s infinite}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,201,60,.5),var(--shadow)}50%{box-shadow:0 0 0 12px rgba(255,201,60,0),var(--shadow)}}
+/* ---------- 句子拼图 ---------- */
+.answer{min-height:64px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.6);border:2px dashed rgba(176,131,213,.35);border-radius:18px;
+  padding:10px;margin-bottom:13px;transition:border-color .2s}
+.answer.empty::after{content:'点下面的词卡，按顺序排好句子';font-size:12px;color:var(--text-light)}
+.chip{cursor:pointer;border:none;font-family:inherit;font-weight:700;font-size:15px;
+  background:#fff;border-radius:14px;padding:11px 14px;box-shadow:var(--shadow);min-height:46px}
+.chip:active{transform:scale(.95)}
+.pool{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:13px}
+.chip.poolcard{background:linear-gradient(135deg,#fff,#F7F3FF)}
+/* ---------- 救小鸟 ---------- */
+.bird{font-size:46px;text-align:center;transition:transform .5s,opacity .5s}
+.bird.fly{transform:translateY(-70px) scale(1.25);opacity:0}
+.hearts{display:flex;gap:5px;justify-content:center;font-size:20px;margin-bottom:6px}
+.hearts span.off{filter:grayscale(1);opacity:.3}
+.blanks{display:flex;gap:7px;justify-content:center;margin:13px 0;flex-wrap:wrap}
+.blank{width:40px;height:50px;border-radius:13px;background:#fff;box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;color:var(--purple-deep)}
+.blank.on{border:2px dashed rgba(176,131,213,.5);background:rgba(255,255,255,.45)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:6px}
+.tile{border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:21px;color:var(--text);
+  background:#fff;border-radius:16px;min-height:var(--tap);box-shadow:var(--shadow)}
+.tile:active{transform:scale(.94)}
+.tile.no{background:var(--pink);color:#8E3A44;animation:shake .4s}
+.tile.gone{visibility:hidden}
+/* ---------- 听指令 ---------- */
+.actor{font-size:62px;text-align:center;line-height:1.35;transition:transform .25s}
+.actor.act{transform:scale(1.22) rotate(-6deg)}
+/* ---------- 单词表 ---------- */
+.search{width:100%;border:none;font-family:inherit;font-size:14px;color:var(--text);
+  background:rgba(255,255,255,.9);border-radius:14px;padding:12px 14px;margin-bottom:10px;
+  box-shadow:var(--shadow);outline:2px solid transparent;transition:outline-color .2s}
+.search:focus{outline-color:rgba(176,131,213,.5)}
+.tablewrap{max-height:66vh;overflow:auto;-webkit-overflow-scrolling:touch}
+.lvhdr{font-size:12px;font-weight:800;color:#fff;margin:18px 0 9px;padding:6px 11px;border-radius:999px;
+  background:linear-gradient(135deg,var(--purple-deep),var(--pink-deep));display:inline-block}
+.lvhdr:first-child{margin-top:0}
+.grp{font-size:12.5px;font-weight:800;color:var(--purple-deep);margin:14px 0 7px;
+  display:flex;align-items:center;gap:7px}
+.grp:first-child{margin-top:0}
+.grp .n{font-weight:600;color:var(--text-light);font-size:11px;background:rgba(255,255,255,.8);
+  border-radius:999px;padding:2px 8px}
+.wrow{display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px dashed rgba(0,0,0,.06)}
+.wrow .e{font-size:23px;width:36px;text-align:center;flex:0 0 36px;font-weight:800}
+.wrow .en{font-weight:800;font-size:14.5px;flex:0 0 auto;min-width:80px}
+.wrow .zh{font-size:12.5px;color:var(--text-light);flex:1}
+.wrow .say{border:none;cursor:pointer;background:rgba(255,255,255,.9);border-radius:10px;
+  width:34px;height:34px;font-size:15px;flex:0 0 34px;box-shadow:var(--shadow)}
+.tag{font-size:9.5px;font-weight:800;border-radius:999px;padding:2px 7px;flex:0 0 auto}
+.tag.book{background:var(--green);color:#2F6B45}
+.tag.draft{background:var(--yellow);color:#8A6A00}
+/* ---------- 反馈浮层 ---------- */
+.toast{position:fixed;left:50%;top:22%;transform:translate(-50%,-50%) scale(.8);opacity:0;
+  pointer-events:none;background:rgba(255,255,255,.96);border-radius:22px;padding:15px 25px;
+  box-shadow:0 10px 34px rgba(0,0,0,.14);font-size:19px;font-weight:800;z-index:99;
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1),opacity .22s;white-space:nowrap;max-width:92vw}
+.toast.show{transform:translate(-50%,-50%) scale(1);opacity:1}
+/* ---------- 闯关进度条 ---------- */
+.pbar{height:12px;border-radius:999px;background:rgba(0,0,0,.07);overflow:hidden;margin:10px 0 14px}
+.pbar i{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,var(--yellow-deep),var(--green-deep),var(--blue-deep));
+  transition:width .5s}
+.note-lock{font-size:11.5px;line-height:1.65;color:var(--text-light);background:rgba(255,255,255,.55);
+  border:1px dashed rgba(0,0,0,.09);border-radius:12px;padding:9px 12px;margin-bottom:11px}
+.note-lock b{color:var(--text)}
+/* ---------- 通关庆祝 ---------- */
+.mask{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.62);backdrop-filter:blur(6px);padding:20px;
+  opacity:0;transition:opacity .25s}
+.mask.show{opacity:1}
+.mask .box{background:#fff;border-radius:26px;box-shadow:0 16px 46px rgba(0,0,0,.16);
+  padding:26px 22px;max-width:380px;width:100%;text-align:center;
+  transform:scale(.86);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.mask.show .box{transform:scale(1)}
+.mask .big{font-size:56px;line-height:1;margin-bottom:6px;animation:pop2 1.1s infinite}
+@keyframes pop2{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+.mask .unlock{margin:14px 0 16px;font-size:13.5px;font-weight:800;color:#2F6B45;
+  background:var(--green);border-radius:14px;padding:11px 13px;line-height:1.55}
+.mask .unlock span{font-weight:600}
+.mask .row{justify-content:center}
+/* ---------- 底部导航 ---------- */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;gap:3px;
+  padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.84);backdrop-filter:blur(18px);
+  border-top:1px solid rgba(255,255,255,.9);max-width:760px;margin:0 auto}
+.tab{flex:1;border:none;background:transparent;cursor:pointer;font-family:inherit;
+  border-radius:15px;padding:7px 1px;min-height:56px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;color:var(--text-light);font-size:9.5px;font-weight:700}
+.tab .ic{font-size:20px;line-height:1}
+.tab.on{background:linear-gradient(135deg,rgba(213,184,230,.5),rgba(255,181,186,.45));color:var(--text)}
+/* ---------- 家长小结 ---------- */
+.log{font-size:12.5px;line-height:1.9}
+.log .l{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed rgba(0,0,0,.07)}
+.log .en{font-weight:700}
+.badge{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--green);color:#2F6B45}
+.badge.warn{background:var(--yellow);color:#8A6A00}
+.empty-hint{text-align:center;font-size:13px;color:var(--text-light);padding:22px 0}
+/* ---------- v5：关卡地图 ---------- */
+.modhead{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.modhead .car{font-size:40px;line-height:1;flex:0 0 auto;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.13))}
+.modhead .car.locked{filter:grayscale(1) opacity(.42)}
+.modhead .txt{flex:1;min-width:0}
+.modhead .txt b{display:block;font-size:16px;margin-bottom:2px}
+.modhead .txt span{font-size:11.5px;color:var(--text-light);line-height:1.5;display:block}
+.stages{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stage{position:relative;cursor:pointer;border:none;font-family:inherit;text-align:left;
+  background:#fff;border-radius:18px;box-shadow:var(--shadow);padding:11px 12px;
+  display:flex;gap:9px;align-items:center;transition:transform .12s}
+.stage:active{transform:scale(.97)}
+.stage .no{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:flex;
+  align-items:center;justify-content:center;font-size:16px;font-weight:800;
+  background:linear-gradient(135deg,#F3ECFF,#FFF0F3);color:var(--purple-deep)}
+.stage .info{flex:1;min-width:0}
+.stage .info b{display:block;font-size:12.5px;margin-bottom:2px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.stage .info i{font-style:normal;font-size:10.5px;color:var(--text-light)}
+.stage .st{font-size:11px;white-space:nowrap;font-weight:800}
+.stage.done{background:linear-gradient(135deg,#F2FFF7,#fff)}
+.stage.done .no{background:linear-gradient(135deg,var(--green),#DFF6E8);color:#2F6B45}
+.stage.doing{background:linear-gradient(135deg,#FFFDF3,#fff);
+  box-shadow:0 0 0 3px rgba(255,201,60,.5),var(--shadow)}
+.stage.lock{background:rgba(255,255,255,.5);box-shadow:none;cursor:default}
+.stage.lock .no{background:rgba(0,0,0,.05);color:#B3A8B3}
+.stage.lock .info b,.stage.lock .info i{color:#B3A8B3}
+/* ---------- v5：车库 ---------- */
+.garage-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.coinbig{font-size:24px;font-weight:800;color:#B8860B}
+.gwrap{max-height:70vh;overflow:auto;-webkit-overflow-scrolling:touch;margin-top:10px}
+.grid-car{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:11px}
+.vcard{position:relative;border:none;cursor:pointer;font-family:inherit;background:#fff;
+  border-radius:17px;box-shadow:var(--shadow);padding:11px 7px 9px;text-align:center;
+  transition:transform .12s}
+.vcard:active{transform:scale(.95)}
+.vcard .ic{font-size:34px;line-height:1.15;display:block;filter:drop-shadow(0 3px 5px rgba(0,0,0,.13))}
+.vcard .nm{font-size:11.5px;font-weight:800;margin-top:5px;display:block;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vcard .pr{font-size:10.5px;font-weight:700;color:#B8860B;margin-top:3px;display:block}
+.vcard.lock .ic{filter:grayscale(1) opacity(.32)}
+.vcard.lock .nm{color:#B3A8B3}
+.vcard.lock .pr{color:#B3A8B3}
+.vcard.owned{background:linear-gradient(135deg,#F4FFF8,#fff)}
+.vcard.owned .pr{color:#2F6B45}
+.vcard.riding{box-shadow:0 0 0 3px var(--yellow-deep),var(--shadow)}
+.vcard.riding::after{content:'🚩';position:absolute;top:6px;right:7px;font-size:13px}
+.rbadge{position:absolute;top:6px;left:7px;font-size:9px;font-weight:800;border-radius:999px;
+  padding:2px 6px;color:#fff}
+.r1{background:#A9A2B0}.r2{background:#6FCB8A}.r3{background:#6FBCDB}
+.r4{background:#B083D5}.r5{background:#E8A317}
+/* ---------- v5：关卡结算 ---------- */
+.ses{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:11px;
+  background:rgba(255,255,255,.72);border-radius:14px;padding:8px 12px;font-size:12px;font-weight:700}
+.ses .b{flex:1;min-width:120px;height:9px;border-radius:999px;background:rgba(0,0,0,.07);overflow:hidden}
+.ses .b i{display:block;height:100%;border-radius:999px;
+  background:linear-gradient(90deg,var(--yellow-deep),var(--green-deep));transition:width .4s}
+.stars{font-size:26px;letter-spacing:3px;margin:4px 0 2px}
+.stars .off{filter:grayscale(1);opacity:.28}
+.coinrow{display:flex;justify-content:center;gap:14px;margin:12px 0 4px;flex-wrap:wrap}
+.coinbox{background:linear-gradient(135deg,#FFF8E2,#FFEFC2);border-radius:14px;padding:8px 14px;
+  font-size:12.5px;font-weight:800;color:#8A6A00}
+.coinbox b{font-size:16px;display:block}
+@media(min-width:520px){.options{grid-template-columns:repeat(4,1fr)}.opt{min-height:126px}
+  .stages{grid-template-columns:repeat(3,1fr)}}
+
+/* ---------- v6：开车地图 ---------- */
+.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:520px){.mgrid{grid-template-columns:repeat(3,1fr)}}
+.mcard{position:relative;border:none;cursor:pointer;font-family:inherit;background:#fff;
+  border-radius:14px;padding:11px 10px 10px;text-align:left;box-shadow:var(--shadow);
+  transition:transform .14s;overflow:hidden;min-height:96px}
+.mcard:active{transform:scale(.96)}
+.mcard .sky{position:absolute;inset:0 0 auto 0;height:34px;opacity:.5}
+.mcard .em{font-size:29px;line-height:1;display:block;position:relative}
+.mcard .nm{font-size:12.5px;font-weight:800;margin-top:6px;display:block;position:relative;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mcard .cond{font-size:10.5px;font-weight:700;margin-top:3px;display:block;position:relative;color:#B8860B}
+.mcard.lock .em{filter:grayscale(1) opacity(.35)}
+.mcard.lock .nm{color:#B3A8B3}
+.mcard.lock .cond{color:#B3A8B3}
+.mcard.open{background:linear-gradient(135deg,#F4FFF8,#fff)}
+.mcard.clear::after{content:'🏁';position:absolute;top:6px;right:7px;font-size:14px}
+.mcard.playing{box-shadow:0 0 0 3px var(--yellow-deep),var(--shadow)}
+
+/* 驾驶台 */
+.drivewrap{position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);
+  background:#EAF3DE;touch-action:none;user-select:none}
+.drivewrap canvas{display:block;width:100%;height:auto}
+.dhud{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--glass);
+  backdrop-filter:blur(12px);border:1px solid var(--glass-b);border-radius:14px;
+  box-shadow:var(--shadow);margin-bottom:8px;font-size:12px;font-weight:700}
+.dhud .sp{flex:1;text-align:center;color:var(--text-light);font-weight:700}
+.dhud b{color:#B8860B}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.pad button{height:56px;border:none;border-radius:14px;background:var(--glass);
+  border:1px solid var(--glass-b);font-size:20px;font-family:inherit;cursor:pointer;
+  box-shadow:var(--shadow);color:var(--text);transition:transform .1s}
+.pad button:active{transform:scale(.93);background:var(--yellow)}
+.pad .mid{display:flex;align-items:center;justify-content:center;font-size:12px;
+  font-weight:800;color:var(--text-light);background:transparent;box-shadow:none;border:none}
+.dtip{font-size:11.5px;color:var(--text-light);text-align:center;margin-top:8px}
+@media(max-width:360px){.stages{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo" id="logo">🦊</div>
+  <div class="who"><b>英语闯关实验室 <span style="font-weight:600;color:#B083D5">v6</span></b><span id="poolInfo">课程词库加载中…</span></div>
+  <div class="pill coin">🪙 <span id="pCoins">0</span></div>
+  <div class="pill star">⭐ <span id="pStars">0</span></div>
+</div>
+
+<div class="scope">
+  <div class="lbl" id="scLbl">📚 练习范围 · 加载中…</div>
+  <div class="prog"><i id="scBar"></i></div>
+  <div class="lb2" id="curLine">闯关目标加载中…</div>
+  <div class="chips" id="lvChips"></div>
+  <div class="chips" id="modChips"></div>
+</div>
+
+<div id="sesBar"></div>
+<main id="stage"></main>
+<nav class="tabs">
+  <button class="tab on" data-g="home"><span class="ic">🏠</span>首页</button>
+  <button class="tab" data-g="map"><span class="ic">🗺️</span>闯关</button>
+  <button class="tab" data-g="garage"><span class="ic">🚗</span>车库</button>
+  <button class="tab" data-g="drive"><span class="ic">🛣️</span>开车</button>
+  <button class="tab" data-g="list"><span class="ic">🔤</span>单词表</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   英语闯关实验室 v6 · 单文件零依赖（v6 新增：10 张开车地图 · Canvas 驾驶收集）
+   课程结构：100 个模块 = 原 M1–M8（教材已核）+ 新增 M9–M100
+   级别：L1 启蒙 / L2 生活 / L3 场景 / L4 认知 / L5 进阶（每级 20 模块）
+   v4 新增：闯关解锁 —— 本模块单词全部答对即通关，自动解锁下一关的模块和单词。
+   v5 新增：关卡制 + 金币 + 车库
+     · 每个模块 10 个关卡，一关一种玩法（听音找图 / 记忆配对 / 救小鸟 / 看图选词 /
+       句子拼图 / 听音选中文 / 听指令 / 字母排序 / 打地鼠 / 混合挑战）
+     · 每关 5 题（第 10 关 Boss 8 题），答对得金币，通关得奖励，按一次答对率评 1–3 星
+     · 10 关全部通过 = 本模块通关 → 解锁下一模块 + 开放本模块专属交通工具
+     · 100 个模块各配 1 辆交通工具（含坦克等自绘 SVG），用金币兑换，可设为座驾
+   标注：book  = 逐条抄自 D:/drive-english-m4/src/curriculum.js（已核过教材页码）
+         draft = 按模块主题补的常用词，⚠️ 合并进正式课程前
+                 必须对着纸质书补 sourcePage，否则 validateCurriculum() 会判不合格
+   音频：Web Speech API（发音）+ Web Audio API（音效）
+   ========================================================= */
+
+/* ---------- 100 个模块 ---------- */
+const MODULES = [
+  {n:1,title:'Hello'},
+  {n:2,title:'School'},
+  {n:3,title:'Family and friends'},
+  {n:4,title:'You and me'},
+  {n:5,title:'Toys and games'},
+  {n:6,title:'My body'},
+  {n:7,title:'Food'},
+  {n:8,title:'My house'},
+  {n:9,title:'课堂用语'},
+  {n:10,title:'数字 11–20'},
+  {n:11,title:'形状'},
+  {n:12,title:'衣服'},
+  {n:13,title:'天气'},
+  {n:14,title:'心情'},
+  {n:15,title:'动作'},
+  {n:16,title:'农场动物'},
+  {n:17,title:'水果'},
+  {n:18,title:'蔬菜'},
+  {n:19,title:'饮料'},
+  {n:20,title:'零食'},
+  {n:21,title:'野生动物'},
+  {n:22,title:'海洋动物'},
+  {n:23,title:'飞鸟与昆虫'},
+  {n:24,title:'我的卧室'},
+  {n:25,title:'客厅'},
+  {n:26,title:'厨房'},
+  {n:27,title:'浴室'},
+  {n:28,title:'花园'},
+  {n:29,title:'公园'},
+  {n:30,title:'校园'},
+  {n:31,title:'职业'},
+  {n:32,title:'更多职业'},
+  {n:33,title:'星期'},
+  {n:34,title:'月份'},
+  {n:35,title:'季节与天空'},
+  {n:36,title:'认识时间'},
+  {n:37,title:'反义词'},
+  {n:38,title:'更多反义词'},
+  {n:39,title:'我的一天'},
+  {n:40,title:'我的一周'},
+  {n:41,title:'农场生活'},
+  {n:42,title:'动物园'},
+  {n:43,title:'森林'},
+  {n:44,title:'沙漠'},
+  {n:45,title:'高山'},
+  {n:46,title:'海滩'},
+  {n:47,title:'城市'},
+  {n:48,title:'商店'},
+  {n:49,title:'超市'},
+  {n:50,title:'餐厅'},
+  {n:51,title:'医院'},
+  {n:52,title:'机场'},
+  {n:53,title:'车站'},
+  {n:54,title:'图书馆'},
+  {n:55,title:'博物馆'},
+  {n:56,title:'电影院'},
+  {n:57,title:'运动'},
+  {n:58,title:'音乐'},
+  {n:59,title:'美术'},
+  {n:60,title:'派对'},
+  {n:61,title:'太空'},
+  {n:62,title:'行星'},
+  {n:63,title:'深海'},
+  {n:64,title:'恐龙'},
+  {n:65,title:'机器人'},
+  {n:66,title:'伟大发明'},
+  {n:67,title:'国家'},
+  {n:68,title:'世界各地'},
+  {n:69,title:'童话'},
+  {n:70,title:'海盗'},
+  {n:71,title:'骑士与城堡'},
+  {n:72,title:'更多游戏'},
+  {n:73,title:'露营'},
+  {n:74,title:'钓鱼'},
+  {n:75,title:'烹饪'},
+  {n:76,title:'种植'},
+  {n:77,title:'建筑'},
+  {n:78,title:'工具'},
+  {n:79,title:'材料'},
+  {n:80,title:'大数字'},
+  {n:81,title:'天象'},
+  {n:82,title:'年月日'},
+  {n:83,title:'植物'},
+  {n:84,title:'小虫'},
+  {n:85,title:'哺乳动物'},
+  {n:86,title:'爬行与两栖'},
+  {n:87,title:'栖息地'},
+  {n:88,title:'环保'},
+  {n:89,title:'回收'},
+  {n:90,title:'健康'},
+  {n:91,title:'安全'},
+  {n:92,title:'更多情绪'},
+  {n:93,title:'形容词'},
+  {n:94,title:'动词'},
+  {n:95,title:'更多动词'},
+  {n:96,title:'方位词'},
+  {n:97,title:'疑问词'},
+  {n:98,title:'学科'},
+  {n:99,title:'时间词'},
+  {n:100,title:'收尾寄语'}
+];
+
+const LEVELS = [
+  {k:1,name:'启蒙',emoji:'🌱',range:'M1–M20'},
+  {k:2,name:'生活',emoji:'🌿',range:'M21–M40'},
+  {k:3,name:'场景',emoji:'🏙️',range:'M41–M60'},
+  {k:4,name:'认知',emoji:'🚀',range:'M61–M80'},
+  {k:5,name:'进阶',emoji:'🎓',range:'M81–M100'}
+];
+const MODS_PER_LEVEL = 20;
+const lvlOf = n => Math.ceil(n / MODS_PER_LEVEL);
+const modInfo = n => MODULES.find(m => m.n === n);
+
+/* book=true 表示这条来自你仓库里已核对的 curriculum.js */
+const W = (id,en,zh,emoji,m,book) => ({id,en,zh,emoji,m,book:!!book});
+const P = (id,en,zh,m,book) => ({id,en,zh,m,book:!!book});
+/* =========================================================
+   L1 · 启蒙（M1–M20）
+   M1–M8 = 原教材模块（book 标记来自 curriculum.js）
+   M9–M20 = 新增基础主题模块（全部 draft）
+   ========================================================= */
+const W1 = [
+  /* ---------- M1 Hello（原） ---------- */
+  W('m1-hello','hello','你好','👋',1,1),
+  W('m1-goodbye','goodbye','再见','🙋',1,1),
+  W('m1-one','one','一','1️⃣',1,1),
+  W('m1-two','two','二','2️⃣',1,1),
+  W('m1-three','three','三','3️⃣',1),
+  W('m1-four','four','四','4️⃣',1),
+  W('m1-five','five','五','5️⃣',1),
+  W('m1-yes','yes','是','✅',1),
+  W('m1-no','no','不','❌',1),
+
+  /* ---------- M2 School（原） ---------- */
+  W('m2-red','red','红色','🔴',2,1),
+  W('m2-blue','blue','蓝色','🔵',2,1),
+  W('m2-pen','pen','钢笔','🖊️',2,1),
+  W('m2-book','book','书','📚',2,1),
+  W('m2-yellow','yellow','黄色','🟡',2),
+  W('m2-green','green','绿色','🟢',2),
+  W('m2-black','black','黑色','⚫',2),
+  W('m2-white','white','白色','⚪',2),
+  W('m2-pink','pink','粉色','🌸',2),
+  W('m2-orange','orange','橙色','🟠',2),
+  W('m2-purple','purple','紫色','🟣',2),
+  W('m2-pencil','pencil','铅笔','✏️',2),
+  W('m2-ruler','ruler','尺子','📏',2),
+  W('m2-bag','bag','书包','🎒',2),
+  W('m2-crayon','crayon','蜡笔','🖍️',2),
+  W('m2-chair','chair','椅子','🪑',2),
+  W('m2-school','school','学校','🏫',2),
+  W('m2-teacher','teacher','老师','🧑‍🏫',2),
+
+  /* ---------- M3 Family and friends（原） ---------- */
+  W('m3-mother','mother','妈妈','👩',3,1),
+  W('m3-father','father','爸爸','👨',3,1),
+  W('m3-sister','sister','姐妹','👭',3,1),
+  W('m3-brother','brother','兄弟','👬',3,1),
+  W('m3-dog','dog','狗','🐶',3,1),
+  W('m3-cat','cat','猫','🐱',3),
+  W('m3-bird','bird','鸟','🐤',3),
+  W('m3-fish','fish','鱼','🐟',3),
+  W('m3-baby','baby','宝宝','👶',3),
+  W('m3-grandma','grandma','奶奶','👵',3),
+  W('m3-grandpa','grandpa','爷爷','👴',3),
+  W('m3-friend','friend','朋友','👫',3),
+
+  /* ---------- M4 You and me（原） ---------- */
+  W('m4-six','six','六','6️⃣',4,1),
+  W('m4-seven','seven','七','7️⃣',4,1),
+  W('m4-eight','eight','八','8️⃣',4,1),
+  W('m4-nine','nine','九','9️⃣',4,1),
+  W('m4-ten','ten','十','🔟',4,1),
+  W('m4-hungry','hungry','饿的','🍴',4,1),
+  W('m4-thirsty','thirsty','渴的','🥤',4,1),
+  W('m4-happy','happy','开心的','😊',4,1),
+  W('m4-sad','sad','伤心的','😢',4,1),
+  W('m4-fat','fat','胖的','🐷',4,1),
+  W('m4-thin','thin','瘦的','🪶',4,1),
+  W('m4-big','big','大的','🐘',4,1),
+  W('m4-small','small','小的','🐭',4,1),
+  W('m4-boy','boy','男孩','👦',4,1),
+  W('m4-girl','girl','女孩','👧',4,1),
+  W('m4-short','short','矮的','🦔',4,1),
+  W('m4-tall','tall','高的','🦒',4,1),
+  W('m4-angry','angry','生气的','😠',4),
+  W('m4-tired','tired','累的','😴',4),
+  W('m4-scared','scared','害怕的','😨',4),
+  W('m4-hot','hot','热的','🥵',4),
+  W('m4-cold','cold','冷的','🥶',4),
+
+  /* ---------- M5 Toys and games（原） ---------- */
+  W('m5-ball','ball','球','⚽',5),
+  W('m5-doll','doll','洋娃娃','🪆',5),
+  W('m5-car','car','小汽车','🚗',5),
+  W('m5-teddy','teddy bear','泰迪熊','🧸',5),
+  W('m5-train','train','火车','🚂',5),
+  W('m5-kite','kite','风筝','🪁',5),
+  W('m5-bike','bike','自行车','🚲',5),
+  W('m5-robot','robot','机器人','🤖',5),
+  W('m5-puzzle','puzzle','拼图','🧩',5),
+  W('m5-balloon','balloon','气球','🎈',5),
+  W('m5-drum','drum','鼓','🥁',5),
+  W('m5-guitar','guitar','吉他','🎸',5),
+  W('m5-blocks','blocks','积木','🧱',5),
+  W('m5-game','game','游戏','🎮',5),
+
+  /* ---------- M6 My body（原） ---------- */
+  W('m6-eye','eye','眼睛','👁️',6),
+  W('m6-ear','ear','耳朵','👂',6),
+  W('m6-nose','nose','鼻子','👃',6),
+  W('m6-mouth','mouth','嘴巴','👄',6),
+  W('m6-hand','hand','手','✋',6),
+  W('m6-foot','foot','脚','🦶',6),
+  W('m6-hair','hair','头发','💇',6),
+  W('m6-teeth','teeth','牙齿','🦷',6),
+  W('m6-tongue','tongue','舌头','👅',6),
+  W('m6-arm','arm','胳膊','💪',6),
+  W('m6-leg','leg','腿','🦵',6),
+  W('m6-head','head','头','🧠',6),
+
+  /* ---------- M7 Food（原） ---------- */
+  W('m7-apple','apple','苹果','🍎',7),
+  W('m7-banana','banana','香蕉','🍌',7),
+  W('m7-cake','cake','蛋糕','🍰',7),
+  W('m7-bread','bread','面包','🍞',7),
+  W('m7-milk','milk','牛奶','🥛',7),
+  W('m7-water','water','水','💧',7),
+  W('m7-juice','juice','果汁','🧃',7),
+  W('m7-egg','egg','鸡蛋','🥚',7),
+  W('m7-cheese','cheese','奶酪','🧀',7),
+  W('m7-icecream','ice cream','冰淇淋','🍦',7),
+  W('m7-pizza','pizza','披萨','🍕',7),
+  W('m7-lemon','lemon','柠檬','🍋',7),
+  W('m7-grapes','grapes','葡萄','🍇',7),
+  W('m7-carrot','carrot','胡萝卜','🥕',7),
+  W('m7-candy','candy','糖果','🍬',7),
+
+  /* ---------- M8 My house（原） ---------- */
+  W('m8-house','house','房子','🏠',8),
+  W('m8-door','door','门','🚪',8),
+  W('m8-window','window','窗户','🪟',8),
+  W('m8-bed','bed','床','🛏️',8),
+  W('m8-sofa','sofa','沙发','🛋️',8),
+  W('m8-tv','TV','电视','📺',8),
+  W('m8-kitchen','kitchen','厨房','🍳',8),
+  W('m8-bathroom','bathroom','浴室','🛁',8),
+  W('m8-garden','garden','花园','🌳',8),
+  W('m8-box','box','盒子','📦',8),
+  W('m8-clock','clock','钟','🕐',8),
+  W('m8-lamp','lamp','台灯','💡',8),
+  W('m8-mirror','mirror','镜子','🪞',8),
+  W('m8-key','key','钥匙','🔑',8),
+
+  /* ---------- M9 课堂用语（新） ---------- */
+  W('m9-listen','listen','听','👂',9),
+  W('m9-look','look','看','👀',9),
+  W('m9-read','read','读','📖',9),
+  W('m9-write','write','写','✍️',9),
+  W('m9-draw','draw','画','🎨',9),
+  W('m9-open','open','打开','📂',9),
+  W('m9-close','close','合上','📕',9),
+  W('m9-ask','ask','问','🙋‍♂️',9),
+  W('m9-answer','answer','回答','💬',9),
+  W('m9-repeat','repeat','重复','🔁',9),
+
+  /* ---------- M10 数字 11–20（新） ---------- */
+  W('m10-eleven','eleven','十一','11',10),
+  W('m10-twelve','twelve','十二','12',10),
+  W('m10-thirteen','thirteen','十三','13',10),
+  W('m10-fourteen','fourteen','十四','14',10),
+  W('m10-fifteen','fifteen','十五','15',10),
+  W('m10-sixteen','sixteen','十六','16',10),
+  W('m10-seventeen','seventeen','十七','17',10),
+  W('m10-eighteen','eighteen','十八','18',10),
+  W('m10-nineteen','nineteen','十九','19',10),
+  W('m10-twenty','twenty','二十','20',10),
+
+  /* ---------- M11 形状（新） ---------- */
+  W('m11-circle','circle','圆形','⭕',11),
+  W('m11-square','square','正方形','🟦',11),
+  W('m11-triangle','triangle','三角形','🔺',11),
+  W('m11-star','star','星星','⭐',11),
+  W('m11-heart','heart','爱心','❤️',11),
+  W('m11-rectangle','rectangle','长方形','▬',11),
+  W('m11-oval','oval','椭圆形','⬭',11),
+  W('m11-diamond','diamond','菱形','🔷',11),
+  W('m11-line','line','直线','➖',11),
+  W('m11-dot','dot','点','⚫',11),
+
+  /* ---------- M12 衣服（新） ---------- */
+  W('m12-tshirt','T-shirt','T恤','👕',12),
+  W('m12-shirt','shirt','衬衫','👔',12),
+  W('m12-dress','dress','连衣裙','👗',12),
+  W('m12-skirt','skirt','短裙','👚',12),
+  W('m12-trousers','trousers','长裤','👖',12),
+  W('m12-shorts','shorts','短裤','🩳',12),
+  W('m12-socks','socks','袜子','🧦',12),
+  W('m12-shoes','shoes','鞋子','👟',12),
+  W('m12-hat','hat','帽子','🧢',12),
+  W('m12-jacket','jacket','外套','🧥',12),
+
+  /* ---------- M13 天气（新） ---------- */
+  W('m13-sunny','sunny','晴朗的','☀️',13),
+  W('m13-rainy','rainy','下雨的','🌧️',13),
+  W('m13-windy','windy','有风的','🌬️',13),
+  W('m13-cloudy','cloudy','多云的','☁️',13),
+  W('m13-snowy','snowy','下雪的','🌨️',13),
+  W('m13-rainbow','rainbow','彩虹','🌈',13),
+  W('m13-umbrella','umbrella','雨伞','☂️',13),
+  W('m13-boots','boots','靴子','👢',13),
+  W('m13-puddle','puddle','水坑','💦',13),
+  W('m13-sky','sky','天空','🌤️',13),
+
+  /* ---------- M14 心情（新） ---------- */
+  W('m14-excited','excited','兴奋的','🤩',14),
+  W('m14-surprised','surprised','惊讶的','😲',14),
+  W('m14-bored','bored','无聊的','🥱',14),
+  W('m14-proud','proud','自豪的','😌',14),
+  W('m14-shy','shy','害羞的','😳',14),
+  W('m14-curious','curious','好奇的','🧐',14),
+  W('m14-love','love','爱','😍',14),
+  W('m14-cry','cry','哭','😭',14),
+  W('m14-laugh','laugh','笑','😂',14),
+  W('m14-kiss','kiss','亲亲','😘',14),
+
+  /* ---------- M15 动作（新） ---------- */
+  W('m15-run','run','跑','🏃',15),
+  W('m15-jump','jump','跳','🤸',15),
+  W('m15-walk','walk','走','🚶',15),
+  W('m15-swim','swim','游泳','🏊',15),
+  W('m15-sing','sing','唱歌','🎤',15),
+  W('m15-dance','dance','跳舞','💃',15),
+  W('m15-climb','climb','爬','🧗',15),
+  W('m15-kick','kick','踢','🦵',15),
+  W('m15-throw','throw','扔','🤾',15),
+  W('m15-catch','catch','接','🧤',15),
+
+  /* ---------- M16 农场动物（新） ---------- */
+  W('m16-cow','cow','奶牛','🐄',16),
+  W('m16-pig','pig','猪','🐖',16),
+  W('m16-duck','duck','鸭子','🦆',16),
+  W('m16-hen','hen','母鸡','🐔',16),
+  W('m16-sheep','sheep','绵羊','🐑',16),
+  W('m16-horse','horse','马','🐴',16),
+  W('m16-goat','goat','山羊','🐐',16),
+  W('m16-rabbit','rabbit','兔子','🐰',16),
+  W('m16-mouse','mouse','老鼠','🐭',16),
+  W('m16-rooster','rooster','公鸡','🐓',16),
+
+  /* ---------- M17 水果（新） ---------- */
+  W('m17-pear','pear','梨','🍐',17),
+  W('m17-peach','peach','桃子','🍑',17),
+  W('m17-mango','mango','芒果','🥭',17),
+  W('m17-cherry','cherry','樱桃','🍒',17),
+  W('m17-watermelon','watermelon','西瓜','🍉',17),
+  W('m17-strawberry','strawberry','草莓','🍓',17),
+  W('m17-pineapple','pineapple','菠萝','🍍',17),
+  W('m17-kiwi','kiwi','奇异果','🥝',17),
+  W('m17-coconut','coconut','椰子','🥥',17),
+  W('m17-melon','melon','香瓜','🍈',17),
+
+  /* ---------- M18 蔬菜（新） ---------- */
+  W('m18-potato','potato','土豆','🥔',18),
+  W('m18-tomato','tomato','西红柿','🍅',18),
+  W('m18-onion','onion','洋葱','🧅',18),
+  W('m18-cabbage','cabbage','卷心菜','🥬',18),
+  W('m18-pumpkin','pumpkin','南瓜','🎃',18),
+  W('m18-corn','corn','玉米','🌽',18),
+  W('m18-mushroom','mushroom','蘑菇','🍄',18),
+  W('m18-pepper','pepper','彩椒','🫑',18),
+  W('m18-broccoli','broccoli','西兰花','🥦',18),
+  W('m18-cucumber','cucumber','黄瓜','🥒',18),
+
+  /* ---------- M19 饮料（新） ---------- */
+  W('m19-tea','tea','茶','🍵',19),
+  W('m19-coffee','coffee','咖啡','☕',19),
+  W('m19-cola','cola','可乐','🥤',19),
+  W('m19-lemonade','lemonade','柠檬水','🍹',19),
+  W('m19-hotchoc','hot chocolate','热可可','🍫',19),
+  W('m19-soup','soup','汤','🍲',19),
+  W('m19-milkshake','milkshake','奶昔','🥛',19),
+  W('m19-smoothie','smoothie','果昔','🧃',19),
+  W('m19-waterbottle','water bottle','水壶','🚰',19),
+  W('m19-orangejuice','orange juice','橙汁','🍊',19),
+
+  /* ---------- M20 零食（新） ---------- */
+  W('m20-biscuit','biscuit','饼干','🍪',20),
+  W('m20-chocolate','chocolate','巧克力','🍫',20),
+  W('m20-popcorn','popcorn','爆米花','🍿',20),
+  W('m20-chips','chips','薯条','🍟',20),
+  W('m20-honey','honey','蜂蜜','🍯',20),
+  W('m20-icelolly','ice lolly','冰棍','🍡',20),
+  W('m20-doughnut','doughnut','甜甜圈','🍩',20),
+  W('m20-pancake','pancake','薄饼','🥞',20),
+  W('m20-sandwich','sandwich','三明治','🥪',20),
+  W('m20-lollipop','lollipop','棒棒糖','🍭',20)
+];
+
+const P1 = [
+  /* M1–M8（原） */
+  P('m1-whats-your-name',"What's your name?",'你叫什么名字？',1,1),
+  P('m1-hello-s','Hello!','你好！',1),
+  P('m1-thank-you','Thank you.','谢谢。',1),
+  P('m1-how-are-you','How are you?','你好吗？',1),
+  P('m1-im-fine',"I'm fine, thank you.",'我很好，谢谢。',1),
+  P('m2-whats-this',"What's this?",'这是什么？',2,1),
+  P('m2-its-a-pen',"It's a pen.",'这是一支钢笔。',2),
+  P('m2-its-a-book',"It's a book.",'这是一本书。',2),
+  P('m2-what-colour','What colour is it?','它是什么颜色？',2),
+  P('m3-whos-that',"Who's that?",'那是谁？',3,1),
+  P('m3-this-is-my-mother','This is my mother.','这是我妈妈。',3),
+  P('m3-i-have-a-dog','I have a dog.','我有一只狗。',3),
+  P('m3-i-have-a-cat','I have a cat.','我有一只猫。',3),
+  P('m4-how-old','How old are you?','你几岁？',4,1),
+  P('m4-im-six',"I'm six.",'我六岁。',4,1),
+  P('m4-are-you-happy','Are you happy?','你开心吗？',4,1),
+  P('m4-yes-i-am','Yes, I am.','是的。',4,1),
+  P('m4-no-im-not',"No, I'm not.",'不，不是。',4,1),
+  P('m4-hes-thin',"He's thin.",'他很瘦。',4,1),
+  P('m4-is-she-sad','Is she sad?','她伤心吗？',4,1),
+  P('m4-yes-she-is','Yes, she is.','是的。',4,1),
+  P('m4-no-she-isnt',"No, she isn't.",'不，不是。',4,1),
+  P('m5-whats-your-favourite-toy',"What's your favourite toy?",'你最喜欢的玩具是什么？',5),
+  P('m5-this-is-my-car','This is my car.','这是我的小汽车。',5),
+  P('m5-i-like-balls','I like balls.','我喜欢球。',5),
+  P('m5-can-you-play','Can you play with me?','你能和我一起玩吗？',5),
+  P('m6-touch-your-head','Touch your head!','摸摸你的头！',6),
+  P('m6-these-are-my-hands','These are my hands.','这是我的双手。',6),
+  P('m6-i-have-two-eyes','I have two eyes.','我有两只眼睛。',6),
+  P('m6-close-your-eyes','Close your eyes!','闭上眼睛！',6),
+  P('m7-i-like-apples','I like apples.','我喜欢苹果。',7),
+  P('m7-do-you-like-milk','Do you like milk?','你喜欢牛奶吗？',7),
+  P('m7-yes-i-do','Yes, I do.','是的，我喜欢。',7),
+  P('m7-no-i-dont',"No, I don't.",'不，我不喜欢。',7),
+  P('m7-im-hungry','I am hungry.','我饿了。',7),
+  P('m8-wheres-the-cat',"Where's the cat?",'猫在哪里？',8),
+  P('m8-its-in-the-box',"It's in the box.",'它在盒子里。',8),
+  P('m8-this-is-my-house','This is my house.','这是我的房子。',8),
+  P('m8-is-it-on-the-bed','Is it on the bed?','它在床上吗？',8),
+
+  /* M9–M20（新） */
+  P('m9-listen-please','Listen to me.','听我说。',9),
+  P('m9-open-your-book','Open your book.','打开你的书。',9),
+  P('m9-close-your-book','Close your book.','合上你的书。',9),
+  P('m10-how-many','How many?','有多少个？',10),
+  P('m10-i-can-count','I can count to twenty.','我能数到二十。',10),
+  P('m11-what-shape','What shape is it?','它是什么形状？',11),
+  P('m11-its-a-circle',"It's a circle.",'它是一个圆形。',11),
+  P('m12-put-on-your-hat','Put on your hat.','戴上你的帽子。',12),
+  P('m12-i-like-my-dress','I like my dress.','我喜欢我的连衣裙。',12),
+  P('m13-how-is-the-weather',"How's the weather today?",'今天天气怎么样？',13),
+  P('m13-its-sunny',"It's sunny today.",'今天很晴朗。',13),
+  P('m14-how-do-you-feel','How do you feel?','你感觉怎么样？',14),
+  P('m14-i-am-excited','I am excited.','我很兴奋。',14),
+  P('m15-can-you-swim','Can you swim?','你会游泳吗？',15),
+  P('m15-lets-dance',"Let's dance!",'我们跳舞吧！',15),
+  P('m15-i-can-jump','I can jump.','我会跳。',15),
+  P('m16-i-see-a-cow','I see a cow.','我看到一头奶牛。',16),
+  P('m16-the-duck-can-swim','The duck can swim.','鸭子会游泳。',16),
+  P('m17-i-like-watermelon','I like watermelon.','我喜欢西瓜。',17),
+  P('m17-have-a-pear','Have a pear.','吃个梨吧。',17),
+  P('m18-do-you-like-tomatoes','Do you like tomatoes?','你喜欢西红柿吗？',18),
+  P('m18-the-corn-is-yellow','The corn is yellow.','玉米是黄色的。',18),
+  P('m19-i-am-thirsty','I am thirsty.','我渴了。',19),
+  P('m19-a-cup-of-tea','A cup of tea, please.','请给我一杯茶。',19),
+  P('m20-can-i-have-a-biscuit','Can I have a biscuit?','我可以吃块饼干吗？',20),
+  P('m20-yummy','Yummy!','好吃！',20)
+];
+/* =========================================================
+   L2 · 生活（M21–M40）全部为新增 draft
+   ========================================================= */
+const W2 = [
+  /* ---------- M21 野生动物 ---------- */
+  W('m21-lion','lion','狮子','🦁',21),
+  W('m21-tiger','tiger','老虎','🐯',21),
+  W('m21-elephant','elephant','大象','🐘',21),
+  W('m21-monkey','monkey','猴子','🐵',21),
+  W('m21-bear','bear','熊','🐻',21),
+  W('m21-giraffe','giraffe','长颈鹿','🦒',21),
+  W('m21-zebra','zebra','斑马','🦓',21),
+  W('m21-panda','panda','熊猫','🐼',21),
+  W('m21-wolf','wolf','狼','🐺',21),
+  W('m21-fox','fox','狐狸','🦊',21),
+
+  /* ---------- M22 海洋动物 ---------- */
+  W('m22-whale','whale','鲸鱼','🐋',22),
+  W('m22-dolphin','dolphin','海豚','🐬',22),
+  W('m22-shark','shark','鲨鱼','🦈',22),
+  W('m22-octopus','octopus','章鱼','🐙',22),
+  W('m22-crab','crab','螃蟹','🦀',22),
+  W('m22-turtle','turtle','海龟','🐢',22),
+  W('m22-squid','squid','鱿鱼','🦑',22),
+  W('m22-lobster','lobster','龙虾','🦞',22),
+  W('m22-shrimp','shrimp','虾','🦐',22),
+  W('m22-seal','seal','海豹','🦭',22),
+
+  /* ---------- M23 飞鸟与昆虫 ---------- */
+  W('m23-eagle','eagle','老鹰','🦅',23),
+  W('m23-owl','owl','猫头鹰','🦉',23),
+  W('m23-parrot','parrot','鹦鹉','🦜',23),
+  W('m23-penguin','penguin','企鹅','🐧',23),
+  W('m23-butterfly','butterfly','蝴蝶','🦋',23),
+  W('m23-bee','bee','蜜蜂','🐝',23),
+  W('m23-ant','ant','蚂蚁','🐜',23),
+  W('m23-ladybird','ladybird','瓢虫','🐞',23),
+  W('m23-spider','spider','蜘蛛','🕷️',23),
+  W('m23-snail','snail','蜗牛','🐌',23),
+
+  /* ---------- M24 我的卧室 ---------- */
+  W('m24-pillow','pillow','枕头','🛏️',24),
+  W('m24-blanket','blanket','毯子','🧶',24),
+  W('m24-desk','desk','书桌','🪑',24),
+  W('m24-wardrobe','wardrobe','衣柜','🗄️',24),
+  W('m24-picture','picture','图画','🖼️',24),
+  W('m24-curtain','curtain','窗帘','🪟',24),
+  W('m24-drawer','drawer','抽屉','🧰',24),
+  W('m24-basket','basket','篮子','🧺',24),
+  W('m24-broom','broom','扫帚','🧹',24),
+  W('m24-nightlight','night light','小夜灯','🌙',24),
+
+  /* ---------- M25 客厅 ---------- */
+  W('m25-armchair','armchair','扶手椅','🛋️',25),
+  W('m25-fireplace','fireplace','壁炉','🔥',25),
+  W('m25-remote','remote','遥控器','📱',25),
+  W('m25-plant','houseplant','绿植','🪴',25),
+  W('m25-vase','vase','花瓶','🏺',25),
+  W('m25-candle','candle','蜡烛','🕯️',25),
+  W('m25-telephone','telephone','电话','☎️',25),
+  W('m25-speaker','speaker','音箱','🔊',25),
+  W('m25-fishtank','fish tank','鱼缸','🐠',25),
+  W('m25-rug','rug','地毯','🧶',25),
+
+  /* ---------- M26 厨房 ---------- */
+  W('m26-fridge','fridge','冰箱','🧊',26),
+  W('m26-oven','oven','烤箱','🍳',26),
+  W('m26-plate','plate','盘子','🍽️',26),
+  W('m26-spoon','spoon','勺子','🥄',26),
+  W('m26-fork','fork','叉子','🍴',26),
+  W('m26-knife','knife','刀','🔪',26),
+  W('m26-cup','cup','杯子','🥤',26),
+  W('m26-bowl','bowl','碗','🥣',26),
+  W('m26-pot','pot','锅','🍲',26),
+  W('m26-kettle','kettle','水壶','🫖',26),
+
+  /* ---------- M27 浴室 ---------- */
+  W('m27-towel','towel','毛巾','🧻',27),
+  W('m27-soap','soap','香皂','🧼',27),
+  W('m27-toothbrush','toothbrush','牙刷','🪥',27),
+  W('m27-toothpaste','toothpaste','牙膏','🧴',27),
+  W('m27-shampoo','shampoo','洗发水','🚿',27),
+  W('m27-comb','comb','梳子','💈',27),
+  W('m27-tap','tap','水龙头','🚰',27),
+  W('m27-shower','shower','淋浴','🛁',27),
+  W('m27-toilet','toilet','马桶','🚽',27),
+  W('m27-sponge','sponge','海绵','🧽',27),
+
+  /* ---------- M28 花园 ---------- */
+  W('m28-flower','flower','花朵','🌸',28),
+  W('m28-tree','tree','树','🌳',28),
+  W('m28-grass','grass','草','🌿',28),
+  W('m28-leaf','leaf','叶子','🍃',28),
+  W('m28-seed','seed','种子','🌰',28),
+  W('m28-soil','soil','泥土','🟤',28),
+  W('m28-fence','fence','篱笆','🪵',28),
+  W('m28-gate','gate','大门','⛩️',28),
+  W('m28-bush','bush','灌木','🪴',28),
+  W('m28-stone','stone','石头','🪨',28),
+
+  /* ---------- M29 公园 ---------- */
+  W('m29-bench','bench','长椅','🪑',29),
+  W('m29-swing','swing','秋千','🎠',29),
+  W('m29-slide','slide','滑梯','🛝',29),
+  W('m29-seesaw','seesaw','跷跷板','⚖️',29),
+  W('m29-pond','pond','池塘','💧',29),
+  W('m29-path','path','小路','🛣️',29),
+  W('m29-fountain','fountain','喷泉','⛲',29),
+  W('m29-picnic','picnic','野餐','🧺',29),
+  W('m29-statue','statue','雕像','🗿',29),
+  W('m29-bridge','bridge','小桥','🌉',29),
+
+  /* ---------- M30 校园 ---------- */
+  W('m30-playground','playground','操场','🎡',30),
+  W('m30-gym','gym','体育馆','🏋️',30),
+  W('m30-canteen','canteen','食堂','🍱',30),
+  W('m30-blackboard','blackboard','黑板','📋',30),
+  W('m30-chalk','chalk','粉笔','🖍️',30),
+  W('m30-pupil','pupil','小学生','🧒',30),
+  W('m30-bell','bell','铃','🔔',30),
+  W('m30-notebook','notebook','本子','📓',30),
+  W('m30-eraser','eraser','橡皮','🧼',30),
+  W('m30-glue','pencil case','笔袋','🧰',30),
+
+  /* ---------- M31 职业 ---------- */
+  W('m31-doctor','doctor','医生','🧑‍⚕️',31),
+  W('m31-nurse','nurse','护士','👩‍⚕️',31),
+  W('m31-police','police officer','警察','👮',31),
+  W('m31-firefighter','firefighter','消防员','🧑‍🚒',31),
+  W('m31-farmer','farmer','农民','🧑‍🌾',31),
+  W('m31-cook','cook','厨师','🧑‍🍳',31),
+  W('m31-driver','driver','司机','🚙',31),
+  W('m31-singer','singer','歌手','🎤',31),
+  W('m31-artist','artist','画家','🎨',31),
+  W('m31-pilot','pilot','飞行员','🛩️',31),
+
+  /* ---------- M32 更多职业 ---------- */
+  W('m32-engineer','engineer','工程师','⚙️',32),
+  W('m32-scientist','scientist','科学家','🔬',32),
+  W('m32-dentist','dentist','牙医','🦷',32),
+  W('m32-vet','vet','兽医','🐕',32),
+  W('m32-postman','postman','邮递员','📮',32),
+  W('m32-baker','baker','面包师','🥖',32),
+  W('m32-guard','guard','保安','💂',32),
+  W('m32-hairdresser','hairdresser','理发师','💇',32),
+  W('m32-gardener','gardener','园丁','🌻',32),
+  W('m32-astronaut','astronaut','宇航员','🚀',32),
+
+  /* ---------- M33 星期 ---------- */
+  W('m33-monday','Monday','星期一','1️⃣',33),
+  W('m33-tuesday','Tuesday','星期二','2️⃣',33),
+  W('m33-wednesday','Wednesday','星期三','3️⃣',33),
+  W('m33-thursday','Thursday','星期四','4️⃣',33),
+  W('m33-friday','Friday','星期五','5️⃣',33),
+  W('m33-saturday','Saturday','星期六','6️⃣',33),
+  W('m33-sunday','Sunday','星期日','7️⃣',33),
+  W('m33-weekend','weekend','周末','🎈',33),
+  W('m33-weekday','weekday','工作日','🏫',33),
+  W('m33-holiday','holiday','假期','🏖️',33),
+
+  /* ---------- M34 月份 ---------- */
+  W('m34-january','January','一月','❄️',34),
+  W('m34-february','February','二月','💗',34),
+  W('m34-march','March','三月','🌱',34),
+  W('m34-april','April','四月','🌷',34),
+  W('m34-may','May','五月','🌸',34),
+  W('m34-june','June','六月','🌞',34),
+  W('m34-july','July','七月','🏖️',34),
+  W('m34-august','August','八月','🍉',34),
+  W('m34-september','September','九月','🍂',34),
+  W('m34-october','October','十月','🎃',34),
+  W('m34-november','November','十一月','🍁',34),
+  W('m34-december','December','十二月','🎄',34),
+
+  /* ---------- M35 季节与天空 ---------- */
+  W('m35-spring','spring','春天','🌷',35),
+  W('m35-summer','summer','夏天','🌞',35),
+  W('m35-autumn','autumn','秋天','🍂',35),
+  W('m35-winter','winter','冬天','⛄',35),
+  W('m35-sun','sun','太阳','☀️',35),
+  W('m35-moon','moon','月亮','🌙',35),
+  W('m35-cloud','cloud','云','☁️',35),
+  W('m35-wind','wind','风','🌬️',35),
+  W('m35-rain','rain','雨','🌧️',35),
+  W('m35-season','season','季节','🍃',35),
+
+  /* ---------- M36 认识时间 ---------- */
+  W('m36-morning','morning','早上','🌅',36),
+  W('m36-afternoon','afternoon','下午','🌇',36),
+  W('m36-evening','evening','傍晚','🌆',36),
+  W('m36-night','night','夜晚','🌃',36),
+  W('m36-noon','noon','中午','🕛',36),
+  W('m36-midnight','midnight','午夜','🌌',36),
+  W('m36-hour','hour','小时','⌛',36),
+  W('m36-minute','minute','分钟','⏱️',36),
+  W('m36-oclock',"o'clock",'整点','🕐',36),
+  W('m36-second-word','second','秒','⏳',36),
+
+  /* ---------- M37 反义词 ---------- */
+  W('m37-long','long','长的','〰️',37),
+  W('m37-new','new','新的','🆕',37),
+  W('m37-old','old','旧的','🏚️',37),
+  W('m37-young','young','年幼的','👶',37),
+  W('m37-fast','fast','快的','🏎️',37),
+  W('m37-slow','slow','慢的','🐌',37),
+  W('m37-clean','clean','干净的','🧴',37),
+  W('m37-dirty','dirty','脏的','🐷',37),
+  W('m37-wet','wet','湿的','💧',37),
+  W('m37-dry','dry','干的','🌵',37),
+
+  /* ---------- M38 更多反义词 ---------- */
+  W('m38-light','light','轻的','🪶',38),
+  W('m38-heavy','heavy','重的','🐘',38),
+  W('m38-soft','soft','软的','🧸',38),
+  W('m38-hard','hard','硬的','🪨',38),
+  W('m38-full','full','满的','🈵',38),
+  W('m38-empty','empty','空的','📭',38),
+  W('m38-loud','loud','响亮的','📢',38),
+  W('m38-quiet','quiet','安静的','🤫',38),
+  W('m38-first','first','第一','🥇',38),
+  W('m38-last','last','最后','🏁',38),
+
+  /* ---------- M39 我的一天 ---------- */
+  W('m39-wakeup','wake up','醒来','⏰',39),
+  W('m39-getup','get up','起床','🛌',39),
+  W('m39-wash','wash','洗','🚿',39),
+  W('m39-eat','eat','吃','🍽️',39),
+  W('m39-drink','drink','喝','🥤',39),
+  W('m39-go','go','去','🚶',39),
+  W('m39-come','come','来','👋',39),
+  W('m39-sleep','sleep','睡觉','😴',39),
+  W('m39-play','play','玩','🎮',39),
+  W('m39-study','study','学习','📚',39),
+
+  /* ---------- M40 我的一周 ---------- */
+  W('m40-homework','homework','作业','📝',40),
+  W('m40-lesson','lesson','课','📖',40),
+  W('m40-class','class','班级','🏫',40),
+  W('m40-break','break','休息时间','☕',40),
+  W('m40-lunch','lunch','午饭','🍱',40),
+  W('m40-dinner','dinner','晚饭','🍛',40),
+  W('m40-breakfast','breakfast','早饭','🥣',40),
+  W('m40-snack','snack','点心','🍿',40),
+  W('m40-sport','sport','运动','⚽',40),
+  W('m40-rest','rest','休息','🛋️',40)
+];
+
+const P2 = [
+  P('m21-the-lion-is-big','The lion is big.','狮子很大。',21),
+  P('m21-i-like-monkeys','I like monkeys.','我喜欢猴子。',21),
+  P('m22-the-whale-is-huge','The whale is huge.','鲸鱼非常大。',22),
+  P('m22-can-a-fish-walk','Can a fish walk?','鱼会走路吗？',22),
+  P('m23-the-bird-can-fly','The bird can fly.','鸟会飞。',23),
+  P('m23-i-see-a-butterfly','I see a butterfly.','我看到一只蝴蝶。',23),
+  P('m24-this-is-my-bedroom','This is my bedroom.','这是我的卧室。',24),
+  P('m24-the-pillow-is-soft','The pillow is soft.','枕头很软。',24),
+  P('m25-wheres-the-remote',"Where's the remote?",'遥控器在哪里？',25),
+  P('m25-sit-on-the-armchair','Sit on the armchair.','坐在扶手椅上。',25),
+  P('m26-the-kettle-is-hot','The kettle is hot.','水壶是热的。',26),
+  P('m26-get-a-spoon','Get a spoon.','拿一把勺子。',26),
+  P('m27-wash-your-hands','Wash your hands.','洗洗手。',27),
+  P('m27-brush-your-teeth','Brush your teeth.','刷刷牙。',27),
+  P('m28-the-flower-is-pink','The flower is pink.','花是粉色的。',28),
+  P('m28-open-the-gate','Open the gate.','打开大门。',28),
+  P('m29-lets-go-to-the-park',"Let's go to the park.",'我们去公园吧。',29),
+  P('m29-i-play-on-the-slide','I play on the slide.','我玩滑梯。',29),
+  P('m30-this-is-our-school','This is our school.','这是我们的学校。',30),
+  P('m30-the-bell-is-ringing','The bell is ringing.','铃响了。',30),
+  P('m31-what-do-you-want-to-be','What do you want to be?','你想当什么？',31),
+  P('m31-my-mother-is-a-doctor','My mother is a doctor.','我妈妈是医生。',31),
+  P('m32-the-vet-helps-animals','The vet helps animals.','兽医帮助动物。',32),
+  P('m32-he-is-a-baker','He is a baker.','他是面包师。',32),
+  P('m33-what-day-is-it-today','What day is it today?','今天星期几？',33),
+  P('m33-today-is-monday','Today is Monday.','今天是星期一。',33),
+  P('m34-when-is-your-birthday','When is your birthday?','你的生日在什么时候？',34),
+  P('m34-my-birthday-is-in-may','My birthday is in May.','我的生日在五月。',34),
+  P('m35-what-season-is-it','What season is it?','现在是什么季节？',35),
+  P('m35-its-cold-in-winter',"It's cold in winter.",'冬天很冷。',35),
+  P('m36-what-time-is-it','What time is it?','现在几点？',36),
+  P('m36-good-morning','Good morning!','早上好！',36),
+  P('m37-is-it-fast-or-slow','Is it fast or slow?','它是快还是慢？',37),
+  P('m37-my-hands-are-clean','My hands are clean.','我的手很干净。',37),
+  P('m38-the-box-is-empty','The box is empty.','盒子是空的。',38),
+  P('m38-be-quiet-please','Be quiet, please.','请安静。',38),
+  P('m39-i-wake-up-at-seven','I wake up at seven.','我七点起床。',39),
+  P('m39-time-to-sleep','Time to sleep.','该睡觉了。',39),
+  P('m40-i-do-my-homework','I do my homework.','我做作业。',40),
+  P('m40-whats-for-lunch',"What's for lunch?",'午饭吃什么？',40)
+];
+/* =========================================================
+   L3 · 场景（M41–M60）全部为新增 draft
+   ========================================================= */
+const W3 = [
+  /* ---------- M41 农场生活 ---------- */
+  W('m41-barn','barn','谷仓','🛖',41),
+  W('m41-tractor','tractor','拖拉机','🚜',41),
+  W('m41-field','field','田野','🌾',41),
+  W('m41-hay','hay','干草','🧺',41),
+  W('m41-bucket','bucket','水桶','🪣',41),
+  W('m41-lamb','lamb','小羊','🐑',41),
+  W('m41-calf','calf','小牛','🐮',41),
+  W('m41-scarecrow','scarecrow','稻草人','🎃',41),
+  W('m41-wheelbarrow','wheelbarrow','独轮车','🛒',41),
+  W('m41-farmhouse','farmhouse','农舍','🏡',41),
+
+  /* ---------- M42 动物园 ---------- */
+  W('m42-zoo','zoo','动物园','🎪',42),
+  W('m42-cage','cage','笼子','🪤',42),
+  W('m42-keeper','keeper','饲养员','🧑‍🔬',42),
+  W('m42-feed','feed','喂食','🥕',42),
+  W('m42-ticket','ticket','门票','🎫',42),
+  W('m42-queue','queue','队伍','🧍',42),
+  W('m42-camera','camera','相机','📷',42),
+  W('m42-map','map','地图','🗺️',42),
+  W('m42-sign','sign','指示牌','🪧',42),
+  W('m42-seat','seat','座位','💺',42),
+
+  /* ---------- M43 森林 ---------- */
+  W('m43-forest','forest','森林','🌲',43),
+  W('m43-branch','branch','树枝','🪵',43),
+  W('m43-moss','moss','苔藓','🍀',43),
+  W('m43-acorn','acorn','橡果','🌰',43),
+  W('m43-hut','hut','小木屋','🛖',43),
+  W('m43-stream','stream','小溪','🏞️',43),
+  W('m43-cave','cave','山洞','🕳️',43),
+  W('m43-shadow','shadow','影子','👤',43),
+  W('m43-trail','trail','林间小路','🥾',43),
+  W('m43-web','spider web','蜘蛛网','🕸️',43),
+
+  /* ---------- M44 沙漠 ---------- */
+  W('m44-desert','desert','沙漠','🏜️',44),
+  W('m44-sand','sand','沙子','⏳',44),
+  W('m44-camel','camel','骆驼','🐫',44),
+  W('m44-cactus','cactus','仙人掌','🌵',44),
+  W('m44-lizard','lizard','蜥蜴','🦎',44),
+  W('m44-snake','snake','蛇','🐍',44),
+  W('m44-oasis','oasis','绿洲','🏝️',44),
+  W('m44-tent','tent','帐篷','⛺',44),
+  W('m44-scorpion','scorpion','蝎子','🦂',44),
+  W('m44-dune','dune','沙丘','🏔️',44),
+
+  /* ---------- M45 高山 ---------- */
+  W('m45-mountain','mountain','高山','⛰️',45),
+  W('m45-hill','hill','小山','🌄',45),
+  W('m45-rock','rock','岩石','🪨',45),
+  W('m45-valley','valley','山谷','🏞️',45),
+  W('m45-waterfall','waterfall','瀑布','🌊',45),
+  W('m45-snowman','snowman','雪人','⛄',45),
+  W('m45-ski','ski','滑雪','🎿',45),
+  W('m45-backpack','backpack','背包','🎒',45),
+  W('m45-icicle','icicle','冰柱','🧊',45),
+  W('m45-cliff','cliff','悬崖','🧗',45),
+
+  /* ---------- M46 海滩 ---------- */
+  W('m46-beach','beach','海滩','🏖️',46),
+  W('m46-shell','shell','贝壳','🐚',46),
+  W('m46-wave','wave','海浪','🌊',46),
+  W('m46-seagull','seagull','海鸥','🕊️',46),
+  W('m46-sandcastle','sandcastle','沙堡','🏰',46),
+  W('m46-sunglasses','sunglasses','太阳镜','🕶️',46),
+  W('m46-swimsuit','swimsuit','泳衣','🩱',46),
+  W('m46-sailboat','sailboat','帆船','⛵',46),
+  W('m46-lighthouse','lighthouse','灯塔','🗼',46),
+  W('m46-sunscreen','sunscreen','防晒霜','🧴',46),
+
+  /* ---------- M47 城市 ---------- */
+  W('m47-city','city','城市','🏙️',47),
+  W('m47-street','street','街道','🛣️',47),
+  W('m47-building','building','楼房','🏢',47),
+  W('m47-bus','bus','公交车','🚌',47),
+  W('m47-taxi','taxi','出租车','🚕',47),
+  W('m47-trafficlight','traffic light','红绿灯','🚦',47),
+  W('m47-crosswalk','crosswalk','斑马线','🚸',47),
+  W('m47-skyscraper','skyscraper','摩天大楼','🏗️',47),
+  W('m47-sidewalk','sidewalk','人行道','🧱',47),
+  W('m47-subway','subway','地铁','🚇',47),
+
+  /* ---------- M48 商店 ---------- */
+  W('m48-shop','shop','商店','🏪',48),
+  W('m48-money','money','钱','💰',48),
+  W('m48-price','price','价格','🏷️',48),
+  W('m48-buy','buy','买','💳',48),
+  W('m48-sell','sell','卖','🤝',48),
+  W('m48-cheap','cheap','便宜的','🪙',48),
+  W('m48-expensive','expensive','昂贵的','💎',48),
+  W('m48-change','change','零钱','💱',48),
+  W('m48-receipt','receipt','收据','🧾',48),
+  W('m48-wallet','wallet','钱包','👛',48),
+
+  /* ---------- M49 超市 ---------- */
+  W('m49-supermarket','supermarket','超市','🏬',49),
+  W('m49-trolley','trolley','购物车','🛒',49),
+  W('m49-basket','shopping basket','购物篮','🧺',49),
+  W('m49-aisle','aisle','货架通道','⬆️',49),
+  W('m49-cashier','cashier','收银员','🧑‍💼',49),
+  W('m49-checkout','checkout','收银台','🧮',49),
+  W('m49-frozen','frozen','冷冻的','🧊',49),
+  W('m49-dairy','dairy','乳制品','🥛',49),
+  W('m49-bakery','bakery','面包区','🥐',49),
+  W('m49-label','label','标签','🏷️',49),
+
+  /* ---------- M50 餐厅 ---------- */
+  W('m50-restaurant','restaurant','餐厅','🍽️',50),
+  W('m50-menu','menu','菜单','📜',50),
+  W('m50-dish','dish','一道菜','🍛',50),
+  W('m50-delicious','delicious','好吃的','😋',50),
+  W('m50-bill','bill','账单','💵',50),
+  W('m50-tip','tip','小费','🪙',50),
+  W('m50-napkin','napkin','餐巾纸','🧻',50),
+  W('m50-chopsticks','chopsticks','筷子','🥢',50),
+  W('m50-waiter','waiter','服务员','🤵',50),
+  W('m50-table','table','餐桌','🪑',50),
+
+  /* ---------- M51 医院 ---------- */
+  W('m51-hospital','hospital','医院','🏥',51),
+  W('m51-ambulance','ambulance','救护车','🚑',51),
+  W('m51-medicine','medicine','药','💊',51),
+  W('m51-injection','injection','打针','💉',51),
+  W('m51-bandage','bandage','绷带','🩹',51),
+  W('m51-patient','patient','病人','🤒',51),
+  W('m51-xray','x-ray','X光片','🦴',51),
+  W('m51-thermometer','thermometer','体温计','🌡️',51),
+  W('m51-clinic','clinic','诊所','🩺',51),
+  W('m51-wheelchair','wheelchair','轮椅','♿',51),
+
+  /* ---------- M52 机场 ---------- */
+  W('m52-airport','airport','机场','🛫',52),
+  W('m52-plane','plane','飞机','✈️',52),
+  W('m52-flight','flight','航班','🛩️',52),
+  W('m52-luggage','luggage','行李','🧳',52),
+  W('m52-passport','passport','护照','📘',52),
+  W('m52-runway','runway','跑道','🛤️',52),
+  W('m52-departure','departure','出发','🛄',52),
+  W('m52-arrival','arrival','到达','🛬',52),
+  W('m52-seatbelt','seat belt','安全带','🪢',52),
+  W('m52-controltower','control tower','塔台','🗼',52),
+
+  /* ---------- M53 车站 ---------- */
+  W('m53-station','station','车站','🚉',53),
+  W('m53-railway','railway','铁路','🛤️',53),
+  W('m53-platform','platform','站台','🚏',53),
+  W('m53-engine','engine','火车头','🚂',53),
+  W('m53-wagon','wagon','车厢','🚃',53),
+  W('m53-timetable','timetable','时刻表','📅',53),
+  W('m53-journey','journey','旅程','🗺️',53),
+  W('m53-passenger','passenger','乘客','🧍',53),
+  W('m53-conductor','conductor','列车员','🎫',53),
+  W('m53-rail','rail','铁轨','🛞',53),
+
+  /* ---------- M54 图书馆 ---------- */
+  W('m54-library','library','图书馆','🏛️',54),
+  W('m54-borrow','borrow','借','📥',54),
+  W('m54-return','return','还','📤',54),
+  W('m54-quiet','silent','安静的','🤫',54),
+  W('m54-story','story','故事','📖',54),
+  W('m54-page','page','书页','📄',54),
+  W('m54-cover','cover','封面','📕',54),
+  W('m54-title','title','书名','🔖',54),
+  W('m54-bookmark','bookmark','书签','🎏',54),
+  W('m54-shelf','shelf','书架','🗄️',54),
+
+  /* ---------- M55 博物馆 ---------- */
+  W('m55-museum','museum','博物馆','🏛️',55),
+  W('m55-painting','painting','油画','🖼️',55),
+  W('m55-sculpture','sculpture','雕塑','🗿',55),
+  W('m55-ancient','ancient','古老的','🏺',55),
+  W('m55-bone','bone','骨头','🦴',55),
+  W('m55-fossil','fossil','化石','🪨',55),
+  W('m55-guide','guide','讲解员','🧑‍🏫',55),
+  W('m55-history','history','历史','📜',55),
+  W('m55-mask','mask','面具','🎭',55),
+  W('m55-coins','coins','古钱币','🪙',55),
+
+  /* ---------- M56 电影院 ---------- */
+  W('m56-cinema','cinema','电影院','🎬',56),
+  W('m56-film','film','电影','🎞️',56),
+  W('m56-screen','screen','银幕','📺',56),
+  W('m56-projector','projector','放映机','📽️',56),
+  W('m56-soda','soda','汽水','🥤',56),
+  W('m56-actor','actor','演员','🎭',56),
+  W('m56-scene','scene','场景','🎪',56),
+  W('m56-comedy','comedy','喜剧','😂',56),
+  W('m56-hero','hero','英雄','🦸',56),
+  W('m56-sound','sound','声音','🔊',56),
+
+  /* ---------- M57 运动 ---------- */
+  W('m57-football','football','足球','⚽',57),
+  W('m57-basketball','basketball','篮球','🏀',57),
+  W('m57-tennis','tennis','网球','🎾',57),
+  W('m57-badminton','badminton','羽毛球','🏸',57),
+  W('m57-volleyball','volleyball','排球','🏐',57),
+  W('m57-swimming','swimming','游泳','🏊',57),
+  W('m57-running','running','跑步','🏃',57),
+  W('m57-skating','skating','滑冰','⛸️',57),
+  W('m57-boxing','boxing','拳击','🥊',57),
+  W('m57-team','team','队伍','👥',57),
+
+  /* ---------- M58 音乐 ---------- */
+  W('m58-music','music','音乐','🎵',58),
+  W('m58-piano','piano','钢琴','🎹',58),
+  W('m58-violin','violin','小提琴','🎻',58),
+  W('m58-flute','flute','长笛','🎶',58),
+  W('m58-saxophone','saxophone','萨克斯','🎷',58),
+  W('m58-trumpet','trumpet','小号','🎺',58),
+  W('m58-song','song','歌曲','🎤',58),
+  W('m58-band','band','乐队','🥁',58),
+  W('m58-concert','concert','音乐会','🎼',58),
+  W('m58-microphone','microphone','麦克风','🎙️',58),
+
+  /* ---------- M59 美术 ---------- */
+  W('m59-art','art','美术','🎨',59),
+  W('m59-paint','paint','颜料','🖌️',59),
+  W('m59-brush','brush','画笔','🪥',59),
+  W('m59-palette','palette','调色板','🧑‍🎨',59),
+  W('m59-sketch','sketch','素描','✏️',59),
+  W('m59-glue','glue','胶水','🧴',59),
+  W('m59-scissors','scissors','剪刀','✂️',59),
+  W('m59-paper','paper','纸','📄',59),
+  W('m59-clay','clay','黏土','🟫',59),
+  W('m59-easel','easel','画架','🖼️',59),
+
+  /* ---------- M60 派对 ---------- */
+  W('m60-party','party','派对','🎉',60),
+  W('m60-gift','gift','礼物','🎁',60),
+  W('m60-invitation','invitation','邀请函','💌',60),
+  W('m60-banner','banner','横幅','🎏',60),
+  W('m60-confetti','confetti','彩纸','🎊',60),
+  W('m60-guest','guest','客人','🙋',60),
+  W('m60-celebrate','celebrate','庆祝','🥳',60),
+  W('m60-wish','wish','许愿','🌠',60),
+  W('m60-clown','clown','小丑','🤡',60),
+  W('m60-partyhat','party hat','派对帽','🎩',60)
+];
+
+const P3 = [
+  P('m41-the-tractor-is-big','The tractor is big.','拖拉机很大。',41),
+  P('m41-the-calf-is-small','The calf is small.','小牛很小。',41),
+  P('m42-lets-go-to-the-zoo',"Let's go to the zoo.",'我们去动物园吧。',42),
+  P('m42-look-at-the-panda','Look at the panda!','看那只熊猫！',42),
+  P('m43-the-forest-is-green','The forest is green.','森林是绿色的。',43),
+  P('m43-i-see-a-cave','I see a cave.','我看到一个山洞。',43),
+  P('m44-the-desert-is-hot','The desert is hot.','沙漠很热。',44),
+  P('m44-a-camel-lives-here','A camel lives here.','骆驼住在这里。',44),
+  P('m45-the-mountain-is-high','The mountain is high.','山很高。',45),
+  P('m45-i-can-ski','I can ski.','我会滑雪。',45),
+  P('m46-i-like-the-beach','I like the beach.','我喜欢海滩。',46),
+  P('m46-the-sand-is-warm','The sand is warm.','沙子是暖的。',46),
+  P('m47-the-city-is-busy','The city is busy.','城市很繁忙。',47),
+  P('m47-wait-for-the-green-light','Wait for the green light.','等绿灯。',47),
+  P('m48-how-much-is-it','How much is it?','这个多少钱？',48),
+  P('m48-i-want-to-buy-a-book','I want to buy a book.','我想买一本书。',48),
+  P('m49-get-a-trolley','Get a trolley.','推一辆购物车。',49),
+  P('m49-the-milk-is-in-the-dairy','The milk is in the dairy.','牛奶在乳制品区。',49),
+  P('m50-a-table-for-two','A table for two, please.','请给我一张两人桌。',50),
+  P('m50-this-is-delicious','This is delicious!','真好吃！',50),
+  P('m51-i-have-a-fever','I have a fever.','我发烧了。',51),
+  P('m51-take-your-medicine','Take your medicine.','把药吃了吧。',51),
+  P('m52-the-plane-is-taking-off','The plane is taking off.','飞机起飞了。',52),
+  P('m52-here-is-my-passport','Here is my passport.','这是我的护照。',52),
+  P('m53-the-train-is-coming','The train is coming.','火车来了。',53),
+  P('m53-which-platform','Which platform?','哪个站台？',53),
+  P('m54-be-quiet-in-the-library','Be quiet in the library.','在图书馆要安静。',54),
+  P('m54-i-borrow-a-story-book','I borrow a story book.','我借了一本故事书。',54),
+  P('m55-look-at-the-old-bone','Look at the old bone.','看这块古老的骨头。',55),
+  P('m55-the-museum-is-big','The museum is big.','博物馆很大。',55),
+  P('m56-lets-watch-a-film',"Let's watch a film.",'我们去看电影吧。',56),
+  P('m56-i-like-this-hero','I like this hero.','我喜欢这个英雄。',56),
+  P('m57-i-like-football','I like football.','我喜欢足球。',57),
+  P('m57-lets-play-together',"Let's play together.",'我们一起玩吧。',57),
+  P('m58-i-can-play-the-piano','I can play the piano.','我会弹钢琴。',58),
+  P('m58-sing-a-song','Sing a song.','唱首歌吧。',58),
+  P('m59-cut-the-paper','Cut the paper.','把纸剪开。',59),
+  P('m59-i-like-to-paint','I like to paint.','我喜欢画画。',59),
+  P('m60-happy-birthday-to-you','Happy birthday to you!','祝你生日快乐！',60),
+  P('m60-here-is-a-gift','Here is a gift for you.','这是给你的礼物。',60)
+];
+/* =========================================================
+   L4 · 认知（M61–M80）全部为新增 draft
+   ========================================================= */
+const W4 = [
+  /* ---------- M61 太空 ---------- */
+  W('m61-space','space','太空','🌌',61),
+  W('m61-rocket','rocket','火箭','🚀',61),
+  W('m61-spaceship','spaceship','飞船','🛸',61),
+  W('m61-satellite','satellite','卫星','🛰️',61),
+  W('m61-telescope','telescope','望远镜','🔭',61),
+  W('m61-galaxy','galaxy','星系','🌠',61),
+  W('m61-comet','comet','彗星','☄️',61),
+  W('m61-alien','alien','外星人','👽',61),
+  W('m61-helmet','helmet','头盔','⛑️',61),
+  W('m61-orbit','orbit','轨道','🔄',61),
+
+  /* ---------- M62 行星 ---------- */
+  W('m62-planet','planet','行星','🪐',62),
+  W('m62-earth','Earth','地球','🌍',62),
+  W('m62-mars','Mars','火星','🔴',62),
+  W('m62-jupiter','Jupiter','木星','🟠',62),
+  W('m62-saturn','Saturn','土星','💫',62),
+  W('m62-venus','Venus','金星','🟡',62),
+  W('m62-mercury','Mercury','水星','⚪',62),
+  W('m62-neptune','Neptune','海王星','🔵',62),
+  W('m62-uranus','Uranus','天王星','🟢',62),
+  W('m62-pluto','Pluto','冥王星','🟣',62),
+
+  /* ---------- M63 深海 ---------- */
+  W('m63-ocean','ocean','海洋','🌊',63),
+  W('m63-coral','coral','珊瑚','🪸',63),
+  W('m63-seaweed','seaweed','海草','🌿',63),
+  W('m63-treasure','treasure','宝藏','💰',63),
+  W('m63-shipwreck','shipwreck','沉船','🚢',63),
+  W('m63-diver','diver','潜水员','🤿',63),
+  W('m63-current','current','洋流','🌀',63),
+  W('m63-trench','trench','海沟','🕳️',63),
+  W('m63-mermaid','mermaid','美人鱼','🧜',63),
+  W('m63-anchor','anchor','船锚','⚓',63),
+
+  /* ---------- M64 恐龙 ---------- */
+  W('m64-dinosaur','dinosaur','恐龙','🦕',64),
+  W('m64-trex','T-rex','霸王龙','🦖',64),
+  W('m64-claw','claw','爪子','🪝',64),
+  W('m64-horn','horn','角','📯',64),
+  W('m64-tail','tail','尾巴','🦎',64),
+  W('m64-nest','nest','巢','🪹',64),
+  W('m64-hatch','hatch','孵化','🥚',64),
+  W('m64-giant','giant','巨兽','🗿',64),
+  W('m64-extinct','extinct','灭绝的','💀',64),
+  W('m64-footprint','footprint','脚印','👣',64),
+
+  /* ---------- M65 机器人 ---------- */
+  W('m65-machine','machine','机器','⚙️',65),
+  W('m65-gear','gear','齿轮','🔧',65),
+  W('m65-battery','battery','电池','🔋',65),
+  W('m65-motor','motor','马达','🛞',65),
+  W('m65-sensor','sensor','传感器','📡',65),
+  W('m65-button','button','按钮','🔘',65),
+  W('m65-switch','switch','开关','🎚️',65),
+  W('m65-wire','wire','电线','🔌',65),
+  W('m65-chip','chip','芯片','💾',65),
+  W('m65-metal','metal','金属','⛓️',65),
+
+  /* ---------- M66 伟大发明 ---------- */
+  W('m66-wheel','wheel','轮子','☸️',66),
+  W('m66-compass','compass','指南针','🧭',66),
+  W('m66-printing','printing','印刷术','🖨️',66),
+  W('m66-lightbulb','light bulb','电灯泡','💡',66),
+  W('m66-glasses','glasses','眼镜','👓',66),
+  W('m66-microscope','microscope','显微镜','🔬',66),
+  W('m66-magnet','magnet','磁铁','🧲',66),
+  W('m66-screw','screw','螺丝','🔩',66),
+  W('m66-pulley','pulley','滑轮','⚙️',66),
+  W('m66-abacus','abacus','算盘','🧮',66),
+
+  /* ---------- M67 国家 ---------- */
+  W('m67-china','China','中国','🇨🇳',67),
+  W('m67-america','America','美国','🇺🇸',67),
+  W('m67-england','England','英国','🇬🇧',67),
+  W('m67-japan','Japan','日本','🇯🇵',67),
+  W('m67-france','France','法国','🇫🇷',67),
+  W('m67-australia','Australia','澳大利亚','🇦🇺',67),
+  W('m67-canada','Canada','加拿大','🇨🇦',67),
+  W('m67-india','India','印度','🇮🇳',67),
+  W('m67-brazil','Brazil','巴西','🇧🇷',67),
+  W('m67-egypt','Egypt','埃及','🇪🇬',67),
+
+  /* ---------- M68 世界各地 ---------- */
+  W('m68-world','world','世界','🌐',68),
+  W('m68-flag','flag','旗帜','🚩',68),
+  W('m68-globe','globe','地球仪','🗺️',68),
+  W('m68-culture','culture','文化','🎎',68),
+  W('m68-language','language','语言','💬',68),
+  W('m68-festival','festival','节日','🎊',68),
+  W('m68-tradition','tradition','传统','🏮',68),
+  W('m68-continent','continent','大洲','🌏',68),
+  W('m68-capital','capital','首都','🏛️',68),
+  W('m68-border','border','边界','🚧',68),
+
+  /* ---------- M69 童话 ---------- */
+  W('m69-fairy','fairy','小仙女','🧚',69),
+  W('m69-prince','prince','王子','🤴',69),
+  W('m69-princess','princess','公主','👸',69),
+  W('m69-castle','castle','城堡','🏰',69),
+  W('m69-dragon','dragon','龙','🐉',69),
+  W('m69-witch','witch','女巫','🧙',69),
+  W('m69-magic','magic','魔法','🪄',69),
+  W('m69-spell','spell','咒语','📜',69),
+  W('m69-crown','crown','王冠','👑',69),
+  W('m69-wand','wand','魔杖','✨',69),
+
+  /* ---------- M70 海盗 ---------- */
+  W('m70-pirate','pirate','海盗','🏴‍☠️',70),
+  W('m70-ship','ship','大船','🚢',70),
+  W('m70-sail','sail','帆','⛵',70),
+  W('m70-plank','plank','跳板','🪵',70),
+  W('m70-sword','sword','剑','⚔️',70),
+  W('m70-island','island','小岛','🏝️',70),
+  W('m70-chest','chest','宝箱','🧰',70),
+  W('m70-spyglass','spyglass','单筒望远镜','🔭',70),
+  W('m70-crew','crew','船员','🧑‍🤝‍🧑',70),
+  W('m70-hook','hook','铁钩','🪝',70),
+
+  /* ---------- M71 骑士与城堡 ---------- */
+  W('m71-knight','knight','骑士','🤺',71),
+  W('m71-armour','armour','盔甲','🦺',71),
+  W('m71-shield','shield','盾牌','🛡️',71),
+  W('m71-tower','tower','塔楼','🏯',71),
+  W('m71-queen','queen','女王','🫅',71),
+  W('m71-king','king','国王','🤴',71),
+  W('m71-throne','throne','王座','🪑',71),
+  W('m71-battle','battle','战斗','⚔️',71),
+  W('m71-arrow','arrow','箭','🏹',71),
+  W('m71-bow','bow','弓','🎯',71),
+
+  /* ---------- M72 更多游戏 ---------- */
+  W('m72-hopscotch','hopscotch','跳房子','🔢',72),
+  W('m72-marble','marble','弹珠','🔮',72),
+  W('m72-skippingrope','skipping rope','跳绳','🎗️',72),
+  W('m72-hideandseek','hide and seek','捉迷藏','🙈',72),
+  W('m72-tag','tag','抓人游戏','🤏',72),
+  W('m72-chess','chess','国际象棋','♟️',72),
+  W('m72-cards','cards','纸牌','🃏',72),
+  W('m72-dice','dice','骰子','🎲',72),
+  W('m72-jigsaw','jigsaw','拼图游戏','🧩',72),
+  W('m72-puppet','puppet','木偶','🎭',72),
+
+  /* ---------- M73 露营 ---------- */
+  W('m73-camp','camp','营地','⛺',73),
+  W('m73-campfire','campfire','营火','🔥',73),
+  W('m73-sleepingbag','sleeping bag','睡袋','🛌',73),
+  W('m73-torch','torch','手电筒','🔦',73),
+  W('m73-lantern','lantern','灯笼','🏮',73),
+  W('m73-rope','rope','绳子','🪢',73),
+  W('m73-marshmallow','marshmallow','棉花糖','🍡',73),
+  W('m73-hammock','hammock','吊床','🛏️',73),
+  W('m73-cabin','cabin','小木屋','🏕️',73),
+  W('m73-insect','insect','昆虫','🦗',73),
+
+  /* ---------- M74 钓鱼 ---------- */
+  W('m74-fishing','fishing','钓鱼','🎣',74),
+  W('m74-rod','rod','鱼竿','🪝',74),
+  W('m74-net','net','渔网','🥅',74),
+  W('m74-boat','boat','小船','🛶',74),
+  W('m74-lake','lake','湖','🏞️',74),
+  W('m74-river','river','河','🌊',74),
+  W('m74-float','float','浮标','🎈',74),
+  W('m74-worm','worm','蚯蚓','🪱',74),
+  W('m74-jetty','jetty','栈桥','🛥️',74),
+  W('m74-bait','bait','鱼饵','🍤',74),
+
+  /* ---------- M75 烹饪 ---------- */
+  W('m75-recipe','recipe','食谱','📋',75),
+  W('m75-boil','boil','煮','♨️',75),
+  W('m75-fry','fry','煎','🍳',75),
+  W('m75-bake','bake','烤','🧁',75),
+  W('m75-mix','mix','搅拌','🥣',75),
+  W('m75-chop','chop','切碎','🔪',75),
+  W('m75-taste','taste','尝一尝','😋',75),
+  W('m75-apron','apron','围裙','🥼',75),
+  W('m75-flour','flour','面粉','🌾',75),
+  W('m75-sugar','sugar','糖','🍬',75),
+
+  /* ---------- M76 种植 ---------- */
+  W('m76-dig','dig','挖','⛏️',76),
+  W('m76-plant','plant','种植','🪴',76),
+  W('m76-grow','grow','生长','🌱',76),
+  W('m76-weed','weed','杂草','🌿',76),
+  W('m76-shovel','shovel','铲子','🪏',76),
+  W('m76-hoe','hoe','锄头','🪓',76),
+  W('m76-blossom','blossom','开花','🌺',76),
+  W('m76-sapling','sapling','小树苗','🌳',76),
+  W('m76-compost','compost','堆肥','🪵',76),
+  W('m76-greenhouse','greenhouse','温室','🏡',76),
+
+  /* ---------- M77 建筑 ---------- */
+  W('m77-build','build','建造','🔨',77),
+  W('m77-brick','brick','砖','🧱',77),
+  W('m77-crane','crane','起重机','🏗️',77),
+  W('m77-cement','cement','水泥','🪣',77),
+  W('m77-roof','roof','屋顶','🏠',77),
+  W('m77-wall','wall','墙','🚧',77),
+  W('m77-floor','floor','地板','⬜',77),
+  W('m77-chimney','chimney','烟囱','🏭',77),
+  W('m77-ladder','ladder','梯子','🪜',77),
+  W('m77-nail','nail','钉子','📌',77),
+
+  /* ---------- M78 工具 ---------- */
+  W('m78-hammer','hammer','锤子','🔨',78),
+  W('m78-saw','saw','锯子','🪚',78),
+  W('m78-drill','drill','电钻','🛠️',78),
+  W('m78-screwdriver','screwdriver','螺丝刀','🪛',78),
+  W('m78-wrench','wrench','扳手','🔧',78),
+  W('m78-pliers','pliers','钳子','🗜️',78),
+  W('m78-axe','axe','斧头','🪓',78),
+  W('m78-tape','tape','卷尺','📏',78),
+  W('m78-clamp','clamp','夹子','📎',78),
+  W('m78-file','file','锉刀','🗂️',78),
+
+  /* ---------- M79 材料 ---------- */
+  W('m79-wood','wood','木头','🪵',79),
+  W('m79-glass','glass','玻璃','🍷',79),
+  W('m79-plastic','plastic','塑料','♻️',79),
+  W('m79-wool','wool','羊毛','🧶',79),
+  W('m79-cotton','cotton','棉花','🧵',79),
+  W('m79-leather','leather','皮革','👜',79),
+  W('m79-rubber','rubber','橡胶','🛞',79),
+  W('m79-silk','silk','丝绸','🧣',79),
+  W('m79-gold','gold','黄金','🥇',79),
+  W('m79-silver','silver','白银','🥈',79),
+
+  /* ---------- M80 大数字 ---------- */
+  W('m80-thirty','thirty','三十','30',80),
+  W('m80-forty','forty','四十','40',80),
+  W('m80-fifty','fifty','五十','50',80),
+  W('m80-sixty','sixty','六十','60',80),
+  W('m80-seventy','seventy','七十','70',80),
+  W('m80-eighty','eighty','八十','80',80),
+  W('m80-ninety','ninety','九十','90',80),
+  W('m80-hundred','hundred','一百','100',80),
+  W('m80-thousand','thousand','一千','1000',80),
+  W('m80-million','million','一百万','1000000',80)
+];
+
+const P4 = [
+  P('m61-the-rocket-is-fast','The rocket is fast.','火箭很快。',61),
+  P('m61-i-see-the-moon-at-night','I see the stars at night.','夜晚我能看到星星。',61),
+  P('m62-the-earth-is-round','The Earth is round.','地球是圆的。',62),
+  P('m62-which-planet-is-red','Which planet is red?','哪颗行星是红色的？',62),
+  P('m63-the-ocean-is-deep','The ocean is deep.','海洋很深。',63),
+  P('m63-a-dolphin-is-smart','A dolphin is smart.','海豚很聪明。',63),
+  P('m64-the-dinosaur-is-extinct','The dinosaur is extinct.','恐龙灭绝了。',64),
+  P('m64-look-at-this-big-footprint','Look at this big footprint!','看这个巨大的脚印！',64),
+  P('m65-the-robot-has-a-button','The robot has a button.','机器人有个按钮。',65),
+  P('m65-my-toy-needs-a-battery','My toy needs a battery.','我的玩具需要电池。',65),
+  P('m66-the-wheel-is-useful','The wheel is useful.','轮子很有用。',66),
+  P('m66-who-invented-the-light-bulb','Who invented the light bulb?','谁发明了电灯泡？',66),
+  P('m67-i-am-from-china','I am from China.','我来自中国。',67),
+  P('m67-china-is-a-big-country','China is a big country.','中国是一个大国。',67),
+  P('m68-the-world-is-big','The world is big.','世界很大。',68),
+  P('m68-we-speak-different-languages','We speak different languages.','我们说不同的语言。',68),
+  P('m69-the-princess-is-kind','The princess is kind.','公主很善良。',69),
+  P('m69-once-upon-a-time','Once upon a time...','很久很久以前……',69),
+  P('m70-the-pirate-has-a-ship','The pirate has a ship.','海盗有一艘船。',70),
+  P('m70-where-is-the-treasure',"Where's the treasure?",'宝藏在哪里？',70),
+  P('m71-the-knight-is-brave','The knight is brave.','骑士很勇敢。',71),
+  P('m71-the-castle-is-old','The castle is old.','城堡很古老。',71),
+  P('m72-let-us-play-hide-and-seek',"Let's play hide and seek.",'我们玩捉迷藏吧。',72),
+  P('m72-i-like-card-games','I like card games.','我喜欢纸牌游戏。',72),
+  P('m73-we-sit-by-the-campfire','We sit by the campfire.','我们坐在营火旁。',73),
+  P('m73-the-night-sky-is-beautiful','The night sky is beautiful.','夜空很美。',73),
+  P('m74-i-go-fishing-with-my-dad','I go fishing with my dad.','我和爸爸去钓鱼。',74),
+  P('m74-the-fish-is-in-the-net','The fish is in the net.','鱼在网里。',74),
+  P('m75-let-us-bake-a-cake',"Let's bake a cake.",'我们烤个蛋糕吧。',75),
+  P('m75-mix-it-well','Mix it well.','好好搅拌。',75),
+  P('m76-i-water-the-plants','I water the plants.','我给植物浇水。',76),
+  P('m76-the-flower-is-growing','The flower is growing.','花正在生长。',76),
+  P('m77-they-build-a-house','They build a house.','他们盖房子。',77),
+  P('m77-the-wall-is-high','The wall is high.','墙很高。',77),
+  P('m78-this-is-a-hammer','This is a hammer.','这是锤子。',78),
+  P('m78-be-careful-with-the-saw','Be careful with the saw.','用锯子要小心。',78),
+  P('m79-the-table-is-made-of-wood','The table is made of wood.','这张桌子是木头做的。',79),
+  P('m79-is-it-glass-or-plastic','Is it glass or plastic?','这是玻璃还是塑料？',79),
+  P('m80-how-many-is-one-hundred','How many is one hundred?','一百是多少？',80),
+  P('m80-i-can-count-to-one-hundred','I can count to one hundred.','我能数到一百。',80)
+];
+/* =========================================================
+   L5 · 进阶（M81–M100）全部为新增 draft
+   ========================================================= */
+const W5 = [
+  /* ---------- M81 天象 ---------- */
+  W('m81-storm','storm','暴风雨','⛈️',81),
+  W('m81-thunder','thunder','雷','⚡',81),
+  W('m81-lightning','lightning','闪电','🌩️',81),
+  W('m81-fog','fog','雾','🌫️',81),
+  W('m81-frost','frost','霜','❄️',81),
+  W('m81-ice','ice','冰','🧊',81),
+  W('m81-hail','hail','冰雹','🌨️',81),
+  W('m81-breeze','breeze','微风','🍃',81),
+  W('m81-sunshine','sunshine','阳光','🌞',81),
+  W('m81-forecast','forecast','天气预报','📊',81),
+
+  /* ---------- M82 年月日 ---------- */
+  W('m82-year','year','年','🎆',82),
+  W('m82-month','month','月','🗓️',82),
+  W('m82-week','week','周','📆',82),
+  W('m82-day','day','日','🕛',82),
+  W('m82-date','date','日期','📅',82),
+  W('m82-calendar','calendar','日历','📔',82),
+  W('m82-birthday','birthday','生日','🎂',82),
+  W('m82-anniversary','anniversary','纪念日','💐',82),
+  W('m82-moment','moment','片刻','⌛',82),
+  W('m82-century','century','世纪','⏳',82),
+
+  /* ---------- M83 植物 ---------- */
+  W('m83-root','root','根','🥕',83),
+  W('m83-stem','stem','茎','🎋',83),
+  W('m83-petal','petal','花瓣','🌸',83),
+  W('m83-pollen','pollen','花粉','🐝',83),
+  W('m83-vine','vine','藤蔓','🍇',83),
+  W('m83-trunk','trunk','树干','🪵',83),
+  W('m83-bud','bud','花苞','🌷',83),
+  W('m83-thorn','thorn','刺','🌵',83),
+  W('m83-fern','fern','蕨类','🍀',83),
+  W('m83-lotus','lotus','荷花','🪷',83),
+
+  /* ---------- M84 小虫 ---------- */
+  W('m84-beetle','beetle','甲虫','🪲',84),
+  W('m84-dragonfly','dragonfly','蜻蜓','🪰',84),
+  W('m84-grasshopper','grasshopper','蚱蜢','🦗',84),
+  W('m84-cricket','cricket','蟋蟀','🦟',84),
+  W('m84-moth','moth','飞蛾','🦋',84),
+  W('m84-caterpillar','caterpillar','毛毛虫','🐛',84),
+  W('m84-cocoon','cocoon','茧','🪺',84),
+  W('m84-hive','hive','蜂巢','🍯',84),
+  W('m84-antenna','antenna','触角','📡',84),
+  W('m84-swarm','swarm','虫群','🐜',84),
+
+  /* ---------- M85 哺乳动物 ---------- */
+  W('m85-deer','deer','鹿','🦌',85),
+  W('m85-squirrel','squirrel','松鼠','🐿️',85),
+  W('m85-hedgehog','hedgehog','刺猬','🦔',85),
+  W('m85-bat','bat','蝙蝠','🦇',85),
+  W('m85-otter','otter','水獭','🦦',85),
+  W('m85-koala','koala','考拉','🐨',85),
+  W('m85-kangaroo','kangaroo','袋鼠','🦘',85),
+  W('m85-hippo','hippo','河马','🦛',85),
+  W('m85-rhino','rhino','犀牛','🦏',85),
+  W('m85-gorilla','gorilla','大猩猩','🦍',85),
+
+  /* ---------- M86 爬行与两栖 ---------- */
+  W('m86-crocodile','crocodile','鳄鱼','🐊',86),
+  W('m86-frog','frog','青蛙','🐸',86),
+  W('m86-tortoise','tortoise','陆龟','🐢',86),
+  W('m86-python','python','蟒蛇','🐍',86),
+  W('m86-gecko','gecko','壁虎','🦎',86),
+  W('m86-tadpole','tadpole','蝌蚪','💧',86),
+  W('m86-venom','venom','毒液','☠️',86),
+  W('m86-scales','scales','鳞片','🔷',86),
+
+  /* ---------- M87 栖息地 ---------- */
+  W('m87-habitat','habitat','栖息地','🌍',87),
+  W('m87-jungle','jungle','丛林','🌴',87),
+  W('m87-savanna','savanna','草原','🌾',87),
+  W('m87-reef','reef','珊瑚礁','🪸',87),
+  W('m87-polar','polar','极地','🐧',87),
+  W('m87-canyon','canyon','峡谷','🏞️',87),
+  W('m87-burrow','burrow','洞穴','🕳️',87),
+  W('m87-den','den','兽窝','🏕️',87),
+  W('m87-meadow','meadow','草甸','🌼',87),
+  W('m87-web','web','网','🕸️',87),
+
+  /* ---------- M88 环保 ---------- */
+  W('m88-environment','environment','环境','🌏',88),
+  W('m88-pollution','pollution','污染','🏭',88),
+  W('m88-litter','litter','垃圾','🗑️',88),
+  W('m88-rubbish','rubbish','废弃物','🚮',88),
+  W('m88-smoke','smoke','烟','💨',88),
+  W('m88-protect','protect','保护','🛡️',88),
+  W('m88-save','save','节省','🌱',88),
+  W('m88-reuse','reuse','再利用','🔄',88),
+  W('m88-reduce','reduce','减少','⬇️',88),
+  W('m88-energy','energy','能源','⚡',88),
+
+  /* ---------- M89 回收 ---------- */
+  W('m89-recycle','recycle','回收','♻️',89),
+  W('m89-bin','bin','垃圾桶','📥',89),
+  W('m89-bottle','bottle','瓶子','🍾',89),
+  W('m89-can','can','易拉罐','🥫',89),
+  W('m89-carton','carton','纸盒','📦',89),
+  W('m89-sort','sort','分类','🔀',89),
+  W('m89-waste','waste','废料','🗑️',89),
+  W('m89-landfill','landfill','填埋场','⛰️',89),
+  W('m89-dump','dump','倒垃圾','🚛',89),
+  W('m89-tidy','tidy','收拾','🧹',89),
+
+  /* ---------- M90 健康 ---------- */
+  W('m90-healthy','healthy','健康的','🍎',90),
+  W('m90-exercise','exercise','锻炼','🏃',90),
+  W('m90-strong','strong','强壮的','💪',90),
+  W('m90-weak','weak','虚弱的','🥀',90),
+  W('m90-ill','ill','生病的','🤒',90),
+  W('m90-fever','fever','发烧','🌡️',90),
+  W('m90-cough','cough','咳嗽','😷',90),
+  W('m90-sneeze','sneeze','打喷嚏','🤧',90),
+  W('m90-sore','sore','疼痛的','🩹',90),
+  W('m90-cure','cure','治愈','💉',90),
+
+  /* ---------- M91 安全 ---------- */
+  W('m91-safety','safety','安全','🦺',91),
+  W('m91-careful','careful','小心的','⚠️',91),
+  W('m91-danger','danger','危险','☢️',91),
+  W('m91-stop','stop','停下','🛑',91),
+  W('m91-cross','cross','过马路','🚸',91),
+  W('m91-stranger','stranger','陌生人','🕵️',91),
+  W('m91-escape','escape','逃跑','🏃',91),
+  W('m91-fire','fire','火','🔥',91),
+  W('m91-alarm','alarm','警报','🚨',91),
+  W('m91-rule','rule','规则','📜',91),
+
+  /* ---------- M92 更多情绪 ---------- */
+  W('m92-brave','brave','勇敢的','🦁',92),
+  W('m92-calm','calm','平静的','😌',92),
+  W('m92-gentle','gentle','温柔的','🤗',92),
+  W('m92-kind','kind','友好的','💗',92),
+  W('m92-polite','polite','有礼貌的','🙇',92),
+  W('m92-rude','rude','粗鲁的','😤',92),
+  W('m92-jealous','jealous','嫉妒的','😒',92),
+  W('m92-lonely','lonely','孤单的','😔',92),
+  W('m92-hopeful','hopeful','充满希望的','🌈',92),
+  W('m92-grateful','grateful','感激的','🙏',92),
+
+  /* ---------- M93 形容词 ---------- */
+  W('m93-bright','bright','明亮的','🔆',93),
+  W('m93-dark','dark','黑暗的','🌑',93),
+  W('m93-warm','warm','温暖的','🧣',93),
+  W('m93-cool','cool','凉爽的','😎',93),
+  W('m93-lovely','lovely','可爱的','🥰',93),
+  W('m93-ugly','ugly','难看的','🤢',93),
+  W('m93-rich','rich','富有的','💰',93),
+  W('m93-poor','poor','贫穷的','🥺',93),
+  W('m93-right','right','对的','✅',93),
+  W('m93-wrong','wrong','错的','❌',93),
+
+  /* ---------- M94 动词 ---------- */
+  W('m94-carry','carry','搬','🧳',94),
+  W('m94-push','push','推','🛒',94),
+  W('m94-pull','pull','拉','🧲',94),
+  W('m94-hold','hold','拿住','🤲',94),
+  W('m94-drop','drop','掉落','⬇️',94),
+  W('m94-fix','fix','修理','🔧',94),
+  W('m94-choose','choose','选择','🤔',94),
+  W('m94-follow','follow','跟随','👣',94),
+  W('m94-hurry','hurry','赶快','⏩',94),
+  W('m94-wait','wait','等待','⏸️',94),
+
+  /* ---------- M95 更多动词 ---------- */
+  W('m95-think','think','思考','💭',95),
+  W('m95-know','know','知道','💡',95),
+  W('m95-remember','remember','记得','📌',95),
+  W('m95-forget','forget','忘记','🌫️',95),
+  W('m95-find','find','找到','🔍',95),
+  W('m95-lose','lose','丢失','🙈',95),
+  W('m95-give','give','给','🎁',95),
+  W('m95-take','take','拿走','✋',95),
+  W('m95-send','send','寄送','📤',95),
+  W('m95-keep','keep','保留','🔒',95),
+
+  /* ---------- M96 方位词 ---------- */
+  W('m96-in','in','在……里面','📦',96),
+  W('m96-on','on','在……上面','🔝',96),
+  W('m96-under','under','在……下面','🔽',96),
+  W('m96-behind','behind','在……后面','🔙',96),
+  W('m96-beside','beside','在……旁边','↔️',96),
+  W('m96-between','between','在……之间','⬌',96),
+  W('m96-near','near','在……附近','📍',96),
+  W('m96-over','over','越过','⤴️',96),
+  W('m96-above','above','在……上方','⏫',96),
+  W('m96-below','below','在……下方','⏬',96),
+
+  /* ---------- M97 疑问词 ---------- */
+  W('m97-what','what','什么','❓',97),
+  W('m97-who','who','谁','🧑',97),
+  W('m97-where','where','哪里','📍',97),
+  W('m97-when','when','什么时候','⏰',97),
+  W('m97-why','why','为什么','🤷',97),
+  W('m97-how','how','怎么','❔',97),
+  W('m97-which','which','哪一个','👉',97),
+  W('m97-whose','whose','谁的','🔑',97),
+  W('m97-howmany','how many','多少（可数）','🔢',97),
+  W('m97-howold','how old','几岁','🎂',97),
+
+  /* ---------- M98 学科 ---------- */
+  W('m98-maths','maths','数学','➗',98),
+  W('m98-english','English','英语','🔤',98),
+  W('m98-chinese','Chinese','语文','🀄',98),
+  W('m98-science','science','科学','🧪',98),
+  W('m98-pe','PE','体育','🏅',98),
+  W('m98-geography','geography','地理','🗺️',98),
+  W('m98-biology','biology','生物','🧬',98),
+  W('m98-physics','physics','物理','⚛️',98),
+  W('m98-subject','subject','科目','📚',98),
+  W('m98-test','test','测验','📝',98),
+
+  /* ---------- M99 时间词 ---------- */
+  W('m99-now','now','现在','⏱️',99),
+  W('m99-then','then','然后','⏭️',99),
+  W('m99-before','before','之前','⏪',99),
+  W('m99-after','after','之后','➡️',99),
+  W('m99-early','early','早','🌅',99),
+  W('m99-late','late','迟','⌚',99),
+  W('m99-always','always','总是','🔁',99),
+  W('m99-never','never','从不','🚫',99),
+  W('m99-sometimes','sometimes','有时','🎲',99),
+  W('m99-soon','soon','很快','⏳',99),
+
+  /* ---------- M100 收尾寄语 ---------- */
+  W('m100-welldone','well done','做得好','👏',100),
+  W('m100-goodjob','good job','干得好','👍',100),
+  W('m100-wonderful','wonderful','太棒了','🌟',100),
+  W('m100-amazing','amazing','了不起','🤩',100),
+  W('m100-clever','clever','聪明的','🦉',100),
+  W('m100-tryagain','try again','再试一次','❤️',100),
+  W('m100-seeyou','see you','再见','👋',100),
+  W('m100-takecare','take care','照顾好自己','🫶',100),
+  W('m100-goodluck','good luck','祝你好运','🍀',100),
+  W('m100-congratulations','congratulations','恭喜','🎉',100)
+];
+
+const P5 = [
+  P('m81-there-is-a-storm','There is a storm.', '有暴风雨。',81),
+  P('m81-i-am-afraid-of-thunder','I am afraid of thunder.','我怕打雷。',81),
+  P('m82-what-is-the-date-today',"What's the date today?",'今天几号？',82),
+  P('m82-today-is-my-birthday','Today is my birthday!','今天是我的生日！',82),
+  P('m83-the-roots-are-in-the-soil','The roots are in the soil.','根在泥土里。',83),
+  P('m83-the-flower-has-pink-petals','The flower has pink petals.','这朵花有粉色的花瓣。',83),
+  P('m84-a-butterfly-comes-from-a-cocoon','A butterfly comes from a cocoon.','蝴蝶从茧里出来。',84),
+  P('m84-bees-live-in-a-hive','Bees live in a hive.','蜜蜂住在蜂巢里。',84),
+  P('m85-a-kangaroo-has-a-pocket','A kangaroo has a pocket.','袋鼠有个口袋。',85),
+  P('m85-the-koala-lives-in-a-tree','The koala lives in a tree.','考拉住在树上。',85),
+  P('m86-a-frog-can-jump-high','A frog can jump high.','青蛙能跳得很高。',86),
+  P('m86-tadpoles-become-frogs','Tadpoles become frogs.','蝌蚪会变成青蛙。',86),
+  P('m87-where-do-pandas-live','Where do pandas live?','熊猫住在哪里？',87),
+  P('m87-the-jungle-is-warm-and-wet','The jungle is warm and wet.','丛林又暖又湿。',87),
+  P('m88-we-must-protect-the-earth','We must protect the Earth.','我们要保护地球。',88),
+  P('m88-do-not-drop-litter','Do not drop litter.','不要乱丢垃圾。',88),
+  P('m89-put-the-bottle-in-the-bin','Put the bottle in the bin.','把瓶子放进垃圾桶。',89),
+  P('m89-we-can-recycle-paper','We can recycle paper.','我们可以回收纸。',89),
+  P('m90-do-exercise-every-day','Do exercise every day.','每天锻炼。',90),
+  P('m90-an-apple-a-day-keeps-you-healthy','An apple a day keeps you healthy.','一天一苹果，健康常伴我。',90),
+  P('m91-always-look-both-ways','Always look both ways.','一定要看两边。',91),
+  P('m91-do-not-talk-to-strangers','Do not talk to strangers.','不要和陌生人说话。',91),
+  P('m92-do-not-be-rude','Do not be rude.','不要粗鲁。',92),
+  P('m92-be-kind-to-your-friends','Be kind to your friends.','对朋友要友好。',92),
+  P('m93-the-sun-is-bright','The sun is bright.','太阳很明亮。',93),
+  P('m93-my-hat-is-warm','My hat is warm.','我的帽子很暖。',93),
+  P('m94-please-wait-for-me','Please wait for me.','请等等我。',94),
+  P('m94-can-you-help-me-carry-this','Can you help me carry this?','你能帮我搬这个吗？',94),
+  P('m95-i-remember-your-name','I remember your name.','我记得你的名字。',95),
+  P('m95-do-not-lose-your-key','Do not lose your key.','别把钥匙弄丢了。',95),
+  P('m96-the-cat-is-under-the-table','The cat is under the table.','猫在桌子下面。',96),
+  P('m96-put-it-between-the-boxes','Put it between the boxes.','把它放在两个盒子之间。',96),
+  P('m97-what-is-your-name-again','What is your name?','你叫什么名字？',97),
+  P('m97-how-old-is-your-brother','How old is your brother?','你哥哥几岁？',97),
+  P('m98-i-like-english','I like English.','我喜欢英语。',98),
+  P('m98-maths-is-fun','Maths is fun.','数学很有趣。',98),
+  P('m99-i-go-to-school-early','I go to school early.','我很早就去学校。',99),
+  P('m99-see-you-soon','See you soon!','回头见！',99),
+  P('m100-well-done-well-done','Well done!','做得好！',100),
+  P('m100-you-are-amazing','You are amazing!','你太棒了！',100)
+];
+/* =========================================================
+   词库合并
+   ========================================================= */
+const WORDS = [...W1, ...W2, ...W3, ...W4, ...W5];
+const SENTENCES = [...P1, ...P2, ...P3, ...P4, ...P5];
+
+/* 听指令 TPR 动作（全部 draft，需核对教材页码） */
+const ACTIONS = [
+  {en:'Jump!',zh:'跳一跳',emoji:'🤸'},
+  {en:'Clap your hands!',zh:'拍拍手',emoji:'👏'},
+  {en:'Stand up!',zh:'站起来',emoji:'🧍'},
+  {en:'Sit down!',zh:'坐下',emoji:'🪑'},
+  {en:'Touch your nose!',zh:'摸摸鼻子',emoji:'👇'},
+  {en:'Wave your hand!',zh:'挥挥手',emoji:'🙌'},
+  {en:'Open your eyes!',zh:'睁开眼睛',emoji:'👀'},
+  {en:'Close your eyes!',zh:'闭上眼睛',emoji:'😑'},
+  {en:'Turn around!',zh:'转个圈',emoji:'🌀'},
+  {en:'Be quiet!',zh:'安静',emoji:'🤫'}
+];
+
+/* =========================================================
+   课程范围：级别（L1–L5）+ 模块（m1–m100）
+   ========================================================= */
+let scope = 'all';        /* all | weak | L1..L5 | m1..m100 */
+let levelView = 1;        /* 下排模块行正在浏览哪个级别 */
+
+function inScope(item){
+  if(scope === 'weak'){
+    const e = S.log[item.id];
+    return !!e && e.wrong > 0;
+  }
+  if(!isUnlocked(item.m)) return false;      /* 锁住的模块，不参与任何范围（也不当干扰项） */
+  if(scope === 'all') return true;
+  if(scope[0] === 'L') return lvlOf(item.m) === Number(scope.slice(1));
+  return item.m === Number(scope.slice(1));
+}
+function poolWords(){ return WORDS.filter(inScope); }
+function poolSentences(){ return SENTENCES.filter(inScope); }
+function moduleCount(n){ return WORDS.filter(w => w.m === n).length; }
+function levelWords(l){ return WORDS.filter(w => lvlOf(w.m) === l).length; }
+function levelSentences(l){ return SENTENCES.filter(s => lvlOf(s.m) === l).length; }
+function weakCount(){ return Object.values(S.log).filter(v => v.wrong > 0).length; }
+function scopeLabel(){
+  if(scope === 'all') return '全部已解锁模块';
+  if(scope === 'weak') return '只练错过的';
+  if(scope[0] === 'L'){ const l = LEVELS.find(x => x.k === Number(scope.slice(1))); return `L${l.k} ${l.name}`; }
+  const n = Number(scope.slice(1)); return `M${n} ${modInfo(n).title}`;
+}
+/* 当前范围内有内容的模块号（单词表用） */
+function modulesInScope(){
+  if(scope === 'all') return unlockedModules();
+  if(scope[0] === 'L'){
+    const l = Number(scope.slice(1));
+    return MODULES.filter(m => lvlOf(m.n) === l && isUnlocked(m.n)).map(m => m.n);
+  }
+  if(scope === 'weak'){
+    const hit = new Set();
+    Object.entries(S.log).forEach(([id,v]) => {
+      if(v.wrong <= 0) return;
+      const w = WORDS.find(x => x.id === id);
+      if(w){ hit.add(w.m); return; }
+      const s = SENTENCES.find(x => x.id === id);
+      if(s) hit.add(s.m);
+    });
+    return MODULES.map(m => m.n).filter(n => hit.has(n));
+  }
+  return [Number(scope.slice(1))];
+}
+
+/* =========================================================
+   闯关解锁（v4 新增）
+   规则：一关一关往前推。
+     · M1 默认开启
+     · 把当前模块里的【每个】单词都答对至少一次 = 过关
+     · 过关后自动解锁下一模块，以及它的新单词
+     · 锁住的模块不出题、不当干扰项、不进单词表
+   ========================================================= */
+/* =========================================================
+   闯关解锁（v5：模块 → 10 个关卡）
+   · M1 默认开启
+   · 每个模块 10 个关卡，一关一种玩法，一关一关往前推
+   · 每关 5 题（第 10 关 Boss 8 题），答对得金币，按一次答对率评 1–3 星
+   · 10 关全部通过 = 本模块通关 → 解锁下一模块 + 开放本模块专属交通工具
+   · 锁住的模块不出题、不当干扰项、不进单词表
+   ========================================================= */
+const STAGES_PER_MOD = 10, Q_PER_STAGE = 5, Q_BOSS = 8;
+const stageKey = (m,s) => m + '-' + s;
+function stageRec(m,s){ return S.stages[stageKey(m,s)] || null; }
+function stageDone(m,s){ const r = stageRec(m,s); return !!(r && r.done); }
+function stageStars(m,s){ const r = stageRec(m,s); return r ? (r.stars|0) : 0; }
+function stagesDoneIn(m){ let c = 0; for(let s = 1; s <= STAGES_PER_MOD; s++) if(stageDone(m,s)) c++; return c; }
+function moduleStars(m){ let c = 0; for(let s = 1; s <= STAGES_PER_MOD; s++) c += stageStars(m,s); return c; }
+function allStars(){ let c = 0; MODULES.forEach(m => { c += moduleStars(m.n); }); return c; }
+function isCleared(n){ return stagesDoneIn(n) >= STAGES_PER_MOD; }
+function isUnlocked(n){ if(S.free) return true; if(n <= 1) return true; return isCleared(n - 1); }
+function levelUnlocked(l){ return MODULES.some(m => lvlOf(m.n) === l && isUnlocked(m.n)); }
+function unlockedModules(){ return MODULES.filter(m => isUnlocked(m.n)).map(m => m.n); }
+function unlockedWords(){ return WORDS.filter(w => isUnlocked(w.m)); }
+function unlockedWordCount(){ return unlockedWords().length; }
+function clearedCount(){ return MODULES.filter(m => isCleared(m.n)).length; }
+function maxUnlocked(){ let mx = 1; MODULES.forEach(m => { if(isUnlocked(m.n)) mx = m.n; }); return mx; }
+/* 关卡开放规则：本模块第 1 关开着，之后每关要前一关通过 */
+function stageOpen(m,s){
+  if(s < 1 || s > STAGES_PER_MOD) return false;
+  if(!isUnlocked(m)) return false;
+  if(S.free) return true;
+  if(s === 1) return true;
+  return stageDone(m, s - 1);
+}
+/* 本模块下一个该打的关卡（10 关全通则返回 0） */
+function nextStageIn(m){ for(let s = 1; s <= STAGES_PER_MOD; s++) if(!stageDone(m,s)) return s; return 0; }
+function progressOf(n){ const got = stagesDoneIn(n); return {got, total: STAGES_PER_MOD,
+  pct: Math.round(got / STAGES_PER_MOD * 100)}; }
+/* 当前关卡 = 第一个还没通关的已解锁模块 */
+function currentModule(){
+  for(const m of MODULES){ if(isUnlocked(m.n) && !isCleared(m.n)) return m.n; }
+  return MODULES[MODULES.length - 1].n;
+}
+/* 干扰项只从未解锁外的词里挑，免得把还没学的词摆到孩子眼前 */
+function distractorPool(){ const u = unlockedWords(); return u.length >= 8 ? u : WORDS; }
+/* 出题优先给「本关还没答对过」的词：
+   否则随机抽会有大量重复，集齐 9 个词平均要答 25 题，孩子会烦。 */
+function pickFresh(pool){
+  const fresh = pool.filter(w => !(S.log[w.id] && S.log[w.id].right > 0));
+  return pick(fresh.length ? fresh : pool);
+}
+
+/* =========================================================
+   存档
+   ========================================================= */
+const KEY = 'drive_english_lab_v5';
+let S = load();
+
+function load(){
+  const base = {stars:0,xp:0,coins:0,log:{},scope:'',cleared:{},free:false,stages:{},garage:{},ride:0,maps:{}};
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return base;
+    const p = JSON.parse(raw);
+    if(!p || typeof p !== 'object') return base;
+    const rd = p.ride | 0;
+    return {stars:p.stars|0, xp:p.xp|0, coins:p.coins|0, log:p.log||{}, scope:p.scope||'',
+            cleared:(p.cleared && typeof p.cleared === 'object') ? p.cleared : {},
+            free:!!p.free,
+            stages:(p.stages && typeof p.stages === 'object') ? p.stages : {},
+            garage:(p.garage && typeof p.garage === 'object') ? p.garage : {},
+            maps:(p.maps && typeof p.maps === 'object') ? p.maps : {},
+            ride:(rd >= 1 && rd <= 100 && p.garage && p.garage[rd]) ? rd : 0};
+  }catch(e){ return base; }
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function record(id,label,ok){
+  if(!S.log[id]) S.log[id] = {label,right:0,wrong:0};
+  if(ok) S.log[id].right++; else S.log[id].wrong++;
+  save();
+}
+/* 模块通关判定：本模块 10 关全过 → 解锁下一模块 + 开放本模块车车（只发一次奖） */
+function checkModuleClear(m){
+  if(S.cleared[m]) return false;              /* 已经记过通关了，不重复发奖 */
+  if(!isUnlocked(m)) return false;
+  if(stagesDoneIn(m) < STAGES_PER_MOD) return false;
+  S.cleared[m] = true;
+  save();
+  return true;
+}
+/* 只更新某个模块 chip 上的进度数字，避免整排 chip 重绘（会丢掉横向滚动位置） */
+function refreshChip(n){
+  const el = document.querySelector(`#modChips .schip[data-k="m${n}"] i`);
+  if(el) el.textContent = `${stagesDoneIn(n)}/${STAGES_PER_MOD}`;
+}
+/* 通用弹层：传 html 片段 + 可选挂载回调 */
+function showMask(html, mount){
+  document.querySelectorAll('#mask').forEach(x => x.remove());
+  const box = document.createElement('div');
+  box.className = 'mask';
+  box.id = 'mask';
+  box.innerHTML = `<div class="box">${html}</div>`;
+  document.body.appendChild(box);
+  requestAnimationFrame(() => box.classList.add('show'));
+  const close = () => { box.classList.remove('show'); setTimeout(() => box.remove(), 280); };
+  box.addEventListener('click', e => { if(e.target === box) close(); });
+  if(mount) mount(box, close);
+  return close;
+}
+/* 模块通关庆祝层（10 关全过） */
+function celebrate(n){
+  sfxWin();
+  const next = n < MODULES.length ? n + 1 : null;
+  const car = RIDE_BY_N[n];
+  showMask(`
+      <div class="big">${next ? '🎉' : '🏆'}</div>
+      <h2>${next ? `M${n} ${modInfo(n).title} 通关！` : '100 个模块全部通关！'}</h2>
+      <div class="stars">⭐ ${moduleStars(n)} / ${STAGES_PER_MOD * 3}</div>
+      <div class="sub" style="margin:6px 0 0">
+        ${next ? `本模块 <b>${STAGES_PER_MOD}</b> 个关卡、<b>${moduleCount(n)}</b> 个单词都走完啦，
+                  共拿到 <b>⭐ ${moduleStars(n)} / ${STAGES_PER_MOD * 3}</b> 颗星。`
+               : `全部 <b>${MODULES.length}</b> 个模块、<b>${WORDS.length}</b> 个单词已走完 ✨`}
+      </div>
+      ${car ? `<div class="unlock">🚗 本模块专属座驾解锁：<b>${car.icon} ${car.name}</b><br>
+          <span>去车库花 🪙 ${car.price} 金币就能开回家</span></div>` : ''}
+      ${next ? `<div class="unlock">🔓 已解锁 M${next} · ${modInfo(next).title}<br>
+          <span>${moduleCount(next)} 个新单词</span>等着你</div>` : ''}
+      <div class="row">
+        <button class="btn sm" id="cGarage">🚗 去车库</button>
+        ${next ? `<button class="btn sm ghost" id="cNext">下一关 M${next} →</button>` : ''}
+        <button class="btn sm ghost" id="cStay">再练一会</button>
+      </div>`, (box, close) => {
+    box.querySelector('#cStay').addEventListener('click', close);
+    const gb = box.querySelector('#cGarage');
+    if(gb) gb.addEventListener('click', () => { close(); go('garage'); });
+    const nx = box.querySelector('#cNext');
+    if(nx) nx.addEventListener('click', () => { close(); setScope('m' + next); go('map'); });
+  });
+}
+/* 答题记分：答对加星与金币，答错记一次错；返回「本关是否已打完」 */
+function award(ok){
+  if(ok){ S.stars++; S.xp += 5; }
+  let ended = false;
+  if(SES && !SES.done){
+    if(ok){
+      SES.i++; SES.right++; SES.coins += 2; S.coins += 2;
+      if(SES.i >= SES.total) ended = true;
+    }else{
+      SES.wrong++;
+    }
+  }
+  save(); paintTop();
+  if(ended) sesFinish();
+  return ended;
+}
+function paintTop(){
+  const st = document.getElementById('pStars');
+  if(st) st.textContent = allStars();
+  const co = document.getElementById('pCoins');
+  if(co) co.textContent = S.coins;
+  const lg = document.getElementById('logo');
+  if(lg){
+    const rd = RIDE_BY_N[S.ride];
+    if(rd) lg.innerHTML = iconHTML(rd.icon, 'lgic');
+    else lg.textContent = '🦊';
+  }
+
+  const w = poolWords().length, s = poolSentences().length;
+  const pi = document.getElementById('poolInfo');
+  if(pi) pi.textContent =
+    `${scopeLabel()}：${w} 词 / ${s} 句 · 共 ${WORDS.length} 词 / ${MODULES.length} 模块 × ${STAGES_PER_MOD} 关`;
+
+  const done = clearedCount(), n = currentModule();
+  const lbl = document.getElementById('scLbl');
+  if(lbl) lbl.innerHTML = S.free
+    ? `📚 ${scopeLabel()} ｜ 🔓 家长模式：全部已解锁`
+    : `📚 ${scopeLabel()} ｜ 🗺️ 通关 <b>${done}</b>/${MODULES.length} 模块 · 当前 <b>M${n}</b> ${modInfo(n).title}`;
+  const bar = document.getElementById('scBar');
+  if(bar) bar.style.width = (S.free ? 100 : done) + '%';
+
+  const cl = document.getElementById('curLine');
+  if(cl){
+    if(S.free){ cl.textContent = '🎯 家长模式：所有模块都开着，随便练'; }
+    else{
+      const s2 = nextStageIn(n);
+      const gm = s2 ? GAMES[(s2 - 1) % GAMES.length] : null;
+      cl.innerHTML = (s2 && gm)
+        ? `🎯 M${n} <b>${modInfo(n).title}</b> · 下一关 第 <b>${s2}</b>/${STAGES_PER_MOD} 关 ${gm.ic}${gm.name} · 本模块 ⭐ <b>${moduleStars(n)}</b>`
+        : `🎯 M${n} 已全部通关 · 本模块 ⭐ <b>${moduleStars(n)}</b>`;
+    }
+  }
+}
+
+/* =========================================================
+   音频
+   ========================================================= */
+let AC = null;
+function ac(){
+  if(!AC){ const C = window.AudioContext || window.webkitAudioContext; if(C) AC = new C(); }
+  if(AC && AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(freq,dur,when,vol,type){
+  const c = ac(); if(!c) return;
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type || 'sine'; o.frequency.value = freq;
+  const t0 = c.currentTime + (when || 0);
+  g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol || .16, t0 + .015);
+  g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(t0); o.stop(t0 + dur + .03);
+}
+function sfxRight(){ tone(784,.13,0,.14); tone(988,.13,.09,.13); tone(1319,.26,.18,.12); }
+function sfxTry(){ tone(392,.18,0,.1,'triangle'); tone(330,.26,.12,.09,'triangle'); }
+function sfxWin(){ [523,659,784,1047].forEach((f,i)=>tone(f,.22,i*.11,.13)); }
+
+let VOICE = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return null;
+  const list = speechSynthesis.getVoices().filter(v => (v.lang||'').toLowerCase().startsWith('en'));
+  if(!list.length) return null;
+  const pref = /Samantha|Google US English|Microsoft (Aria|Jenny|Zira|Guy)|Karen|Daniel/i;
+  return list.find(v => pref.test(v.name)) || list[0];
+}
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = () => { VOICE = pickVoice(); };
+  VOICE = pickVoice();
+}
+function speak(text,rate){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = rate || 0.78; u.pitch = 1.06;
+    if(VOICE) u.voice = VOICE;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* =========================================================
+   工具
+   ========================================================= */
+const $ = sel => document.querySelector(sel);
+const rnd = n => Math.floor(Math.random()*n);
+const pick = arr => arr[rnd(arr.length)];
+function shuffle(a){
+  const b = a.slice();
+  for(let i=b.length-1;i>0;i--){ const j=rnd(i+1); [b[i],b[j]]=[b[j],b[i]]; }
+  return b;
+}
+/* ⚠️ 关键：按 emoji 去重挑干扰项。
+   原始数据里 boy/brother、girl/sister 等曾经共用同一个 emoji，
+   如果不去重，听音找图会出现两张一模一样的卡，孩子无法判断。 */
+function optionsFor(pool,target,count){
+  const seen = new Set([target.emoji]);
+  const out = [];
+  const rest = shuffle(pool).filter(w => w.id !== target.id);
+  for(const w of rest){
+    if(out.length >= count) break;
+    if(seen.has(w.emoji)) continue;
+    seen.add(w.emoji); out.push(w);
+  }
+  for(const w of rest){                       /* 同 emoji 词太多时兜底 */
+    if(out.length >= count) break;
+    if(!out.some(o => o.id === w.id)) out.push(w);
+  }
+  return out;
+}
+let toastTimer = null;
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 950);
+}
+const PRAISE = ['太棒了！','你真厉害！','答对啦！','Excellent!','很好！','Great job!'];
+const NUDGE  = ['再听一次～','没关系，慢慢来','Try again～','仔细听哦'];
+
+/* 范围提示：只在范围内确实没有内容时才退回「全部」 */
+function needPool(kind){
+  const p = kind === 'w' ? poolWords() : poolSentences();
+  if(p.length) return p;
+  toast(scope === 'weak' ? '还没有错过的内容，先玩「全部」吧～' : '这组还没有内容，已切回「全部」');
+  setScope('all');
+  return kind === 'w' ? poolWords() : poolSentences();
+}
+/* =========================================================
+   游戏 1：🔊 听音找图
+   ========================================================= */
+const findGame = {target:null,errors:0,locked:false};
+
+function mountFind(root){ findGame.errors = 0; newFindRound(root); }
+
+function newFindRound(root){
+  if(SES && SES.done) return;              /* 本关已打完 → 别再出题 */
+  const g = findGame;
+  g.target = pickFresh(needPool('w'));
+  const distractorCount = g.errors >= 3 ? 1 : 3;      /* 连错 3 次 → 降到 2 选 1 */
+  /* 干扰项从「已解锁词库」挑（按 emoji 去重）：这样即使当前范围只剩 1 个词，
+     也仍然凑得齐 4 张互不相同的图，而且不会把还没解锁的词摆到孩子眼前。 */
+  const opts = shuffle([g.target, ...optionsFor(distractorPool(), g.target, distractorCount)]);
+  g.locked = false;
+
+  root.innerHTML = `
+    <div class="card">
+      <h2>🔊 听音找图</h2>
+      <div class="sub">听清楚，点出对应的图片。范围：<b>${scopeLabel()}</b>。答错会再放一次给你听。</div>
+      <div class="prompt"><div class="big">🎧</div><div class="q">点下面按钮再听一次</div></div>
+      <div class="center" style="margin-bottom:13px">
+        <button class="btn ghost" id="again">🔊 再听一次</button>
+      </div>
+      <div class="options" id="opts"></div>
+    </div>`;
+
+  const box = root.querySelector('#opts');
+  opts.forEach(w => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    /* 数字类词（11–20、大数字）glyph 比较长，按长度缩字号，避免撑出卡片 */
+    const gl = w.emoji.length;
+    b.innerHTML = `<span class="e"${gl > 3 ? ' style="font-size:20px"' : gl > 2 ? ' style="font-size:28px"' : ''}>${w.emoji}</span>`;
+    b.dataset.id = w.id;
+    b.addEventListener('click', () => answerFind(root, b, w));
+    box.appendChild(b);
+  });
+  root.querySelector('#again').addEventListener('click', () => speak(g.target.en));
+  setTimeout(() => speak(g.target.en), 260);
+}
+
+function answerFind(root, btn, w){
+  const g = findGame;
+  if(g.locked) return;
+  const right = w.id === g.target.id;
+  if(right){
+    g.locked = true;
+    btn.classList.add('right');
+    sfxRight(); award(true); record(g.target.id, g.target.en, true);
+    toast(pick(PRAISE)); speak(g.target.en);
+    g.errors = 0;
+    setTimeout(() => newFindRound(root), 1150);
+  }else{
+    btn.classList.add('wrong');
+    sfxTry(); award(false); record(g.target.id, g.target.en, false);
+    g.errors++;
+    speak(g.target.en);
+    const c = root.querySelector(`.opt[data-id="${g.target.id}"]`);
+    if(c) c.classList.add('hint');
+    toast(pick(NUDGE));
+    setTimeout(() => {
+      if(g.errors >= 3) newFindRound(root);
+      else{ const cc = root.querySelector(`.opt[data-id="${g.target.id}"]`); if(cc) cc.classList.remove('hint'); }
+    }, 1400);
+  }
+}
+
+/* =========================================================
+   游戏 2：🧩 句子拼图
+   ========================================================= */
+const puzzleGame = {item:null,tokens:[],placed:[],locked:false};
+
+function mountPuzzle(root){ newPuzzleRound(root); }
+
+function newPuzzleRound(root){
+  if(SES && SES.done) return;
+  const g = puzzleGame;
+  g.item = pick(needPool('s'));
+  g.tokens = g.item.en.split(' ');
+  g.placed = [];
+  g.locked = false;
+  renderPuzzle(root);
+  setTimeout(() => speak(g.item.en), 300);
+}
+
+function renderPuzzle(root){
+  const g = puzzleGame;
+  const remaining = g.tokens.map((t,i)=>({t,i})).filter(o => !g.placed.includes(o.i));
+
+  root.innerHTML = `
+    <div class="card">
+      <h2>🧩 句子拼图</h2>
+      <div class="sub">听一听这句话，把词卡按顺序点出来。（中文：${g.item.zh}）范围：<b>${scopeLabel()}</b>。</div>
+      <div class="center" style="margin-bottom:12px">
+        <button class="btn ghost" id="again">🔊 再听一次</button>
+      </div>
+      <div class="answer ${g.placed.length?'':'empty'}" id="answer">
+        ${g.placed.map(i => `<button class="chip" data-back="${i}">${g.tokens[i]}</button>`).join('')}
+      </div>
+      <div class="pool" id="pool">
+        ${shuffle(remaining).map(o => `<button class="chip poolcard" data-i="${o.i}">${o.t}</button>`).join('')}
+      </div>
+      <div class="row" style="justify-content:center">
+        <button class="btn sm ghost" id="undo">← 退一格</button>
+        <button class="btn sm" id="check">检查 ✓</button>
+      </div>
+    </div>`;
+
+  root.querySelector('#again').addEventListener('click', () => speak(g.item.en));
+  root.querySelectorAll('#pool .chip').forEach(b => b.addEventListener('click', () => {
+    if(g.locked) return;
+    g.placed.push(Number(b.dataset.i));
+    renderPuzzle(root);
+  }));
+  root.querySelectorAll('#answer .chip').forEach(b => b.addEventListener('click', () => {
+    if(g.locked) return;
+    g.placed = g.placed.filter(x => x !== Number(b.dataset.back));
+    renderPuzzle(root);
+  }));
+  root.querySelector('#undo').addEventListener('click', () => { g.placed.pop(); renderPuzzle(root); });
+  root.querySelector('#check').addEventListener('click', () => checkPuzzle(root));
+}
+
+function checkPuzzle(root){
+  const g = puzzleGame;
+  const ok = g.placed.map(i => g.tokens[i]).join(' ') === g.item.en;
+  if(ok){
+    g.locked = true;
+    sfxRight(); sfxWin(); award(true); record(g.item.id, g.item.en, true);
+    toast('🎉 ' + pick(PRAISE)); speak(g.item.en);
+    setTimeout(() => newPuzzleRound(root), 1700);
+  }else{
+    sfxTry(); award(false); record(g.item.id, g.item.en, false);
+    toast(pick(NUDGE)); speak(g.item.en);
+    root.querySelector('#answer').style.borderColor = 'var(--pink-deep)';
+    setTimeout(() => { g.placed = []; renderPuzzle(root); }, 900);
+  }
+}
+
+/* =========================================================
+   游戏 3：🐦 救小鸟（Hangman 的儿童友好改造）
+   ========================================================= */
+const birdGame = {word:null,slot:[],tiles:[],feathers:4,locked:false};
+const SPELLABLE = () => unlockedWords().filter(w => /^[a-z]+$/.test(w.en) && w.en.length >= 3);
+
+function mountBird(root){ newBirdRound(root); }
+
+function newBirdRound(root){
+  if(SES && SES.done) return;
+  const g = birdGame;
+  const pool = poolWords().filter(w => /^[a-z]+$/.test(w.en) && w.en.length >= 3);
+  g.word = pickFresh(pool.length ? pool : SPELLABLE());
+  const letters = g.word.en.split('');
+  const decoys = 'abcdefghijklmnopqrstuvwxyz'.split('').filter(c => !letters.includes(c));
+  g.slot = Array(letters.length).fill('');
+  g.feathers = 4;
+  g.locked = false;
+  g.tiles = shuffle([...letters, ...shuffle(decoys).slice(0, 3)])
+    .map((ch,i) => ({ch, id:i, used:false}));
+  renderBird(root);
+  setTimeout(() => speak(g.word.en), 300);
+}
+
+function renderBird(root){
+  const g = birdGame;
+  const done = !g.slot.includes('') && g.slot.length === g.word.en.length;
+  root.innerHTML = `
+    <div class="card">
+      <h2>🐦 救小鸟</h2>
+      <div class="sub">听单词，按顺序点字母。拼对了小鸟就能飞回家！范围：<b>${scopeLabel()}</b>。</div>
+      <div class="hearts">${[0,1,2,3].map(i => `<span class="${i<g.feathers?'':'off'}">🪶</span>`).join('')}</div>
+      <div class="bird" id="bird">${g.feathers>=3?'🐦':g.feathers===2?'🐤':'🥚'}</div>
+      <div class="blanks">${g.slot.map(ch => `<div class="blank ${ch?'':'on'}">${ch}</div>`).join('')}</div>
+      <div class="center" style="margin-bottom:12px">
+        <button class="btn ghost sm" id="again">🔊 再听一次</button>
+      </div>
+      <div class="tiles" id="tiles">
+        ${g.tiles.map(t => `<button class="tile ${t.used?'gone':''}" data-id="${t.id}">${t.ch}</button>`).join('')}
+      </div>
+    </div>`;
+  root.querySelector('#again').addEventListener('click', () => speak(g.word.en));
+  root.querySelectorAll('#tiles .tile').forEach(b =>
+    b.addEventListener('click', () => tapLetter(root, b, Number(b.dataset.id))));
+  if(done) finishBird(root);
+}
+
+function tapLetter(root, btn, id){
+  const g = birdGame;
+  if(g.locked || btn.classList.contains('gone')) return;
+  const tile = g.tiles.find(t => t.id === id);
+  const pos = g.slot.indexOf('');
+  if(pos < 0) return;
+  if(tile.ch === g.word.en[pos]){
+    g.slot[pos] = tile.ch;
+    tile.used = true;
+    sfxRight();
+    renderBird(root);
+  }else{
+    btn.classList.add('no');
+    sfxTry();
+    award(false);
+    g.feathers--;
+    record(g.word.id, g.word.en, false);
+    speak(g.word.en);
+    if(g.feathers <= 0){
+      g.locked = true;
+      toast('小鸟有点累了，我们再来一次～');
+      setTimeout(() => newBirdRound(root), 1500);
+      return;
+    }
+    setTimeout(() => { btn.classList.remove('no'); renderBird(root); }, 420);
+  }
+}
+
+function finishBird(root){
+  const g = birdGame;
+  g.locked = true;
+  sfxWin(); award(true); record(g.word.id, g.word.en, true);
+  const b = root.querySelector('#bird');
+  if(b) b.classList.add('fly');
+  toast('🎉 小鸟飞回家啦！' + g.word.en);
+  speak(g.word.en);
+  setTimeout(() => newBirdRound(root), 2000);
+}
+
+/* =========================================================
+   游戏 4：🕺 听指令做动作（TPR）
+   ========================================================= */
+const simonGame = {target:null,errors:0,locked:false};
+
+function mountSimon(root){ simonGame.errors = 0; newSimonRound(root); }
+
+function newSimonRound(root){
+  if(SES && SES.done) return;
+  const g = simonGame;
+  g.target = pick(ACTIONS);
+  const others = shuffle(ACTIONS.filter(a => a.en !== g.target.en)).slice(0, g.errors >= 3 ? 1 : 3);
+  const opts = shuffle([g.target, ...others]);
+  g.locked = false;
+
+  root.innerHTML = `
+    <div class="card">
+      <h2>🕺 听指令做动作</h2>
+      <div class="sub">听老师说什么，点出那个动作。</div>
+      <div class="actor" id="actor">🧒</div>
+      <div class="center" style="margin:12px 0 15px">
+        <button class="btn ghost" id="again">🔊 再听一次</button>
+      </div>
+      <div class="options" id="opts"></div>
+    </div>`;
+
+  const box = root.querySelector('#opts');
+  opts.forEach(a => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = `<span class="e">${a.emoji}</span><span class="t">${a.zh}</span>`;
+    b.dataset.i = ACTIONS.indexOf(a);
+    b.addEventListener('click', () => answerSimon(root, b, a));
+    box.appendChild(b);
+  });
+  root.querySelector('#again').addEventListener('click', () => speak(g.target.en));
+  setTimeout(() => speak(g.target.en), 260);
+}
+
+function answerSimon(root, btn, a){
+  const g = simonGame;
+  if(g.locked) return;
+  if(a.en === g.target.en){
+    g.locked = true;
+    btn.classList.add('right');
+    sfxRight(); award(true); record('act:' + g.target.en, g.target.en, true);
+    const actor = root.querySelector('#actor');
+    actor.textContent = g.target.emoji;
+    actor.classList.add('act');
+    toast(pick(PRAISE)); speak(g.target.en);
+    g.errors = 0;
+    setTimeout(() => newSimonRound(root), 1250);
+  }else{
+    btn.classList.add('wrong');
+    sfxTry(); award(false); record('act:' + g.target.en, g.target.en, false);
+    g.errors++;
+    speak(g.target.en);
+    const idx = ACTIONS.indexOf(g.target);
+    const c = root.querySelector(`.opt[data-i="${idx}"]`);
+    if(c) c.classList.add('hint');
+    toast(pick(NUDGE));
+    setTimeout(() => {
+      if(g.errors >= 3) newSimonRound(root);
+      else if(c) c.classList.remove('hint');
+    }, 1400);
+  }
+}
+
+/* =========================================================
+   v5：100 辆交通工具（每个模块 1 辆专属座驾）
+   稀有度按级别：L1 普通 / L2 精良 / L3 稀有 / L4 史诗 / L5 传说
+   价格 = 100 + 模块号 × 3（越往后越贵，靠闯关赚金币慢慢攒）
+   ========================================================= */
+const RARITY = ['', '普通', '精良', '稀有', '史诗', '传说'];
+/* 没有对应 emoji 的载具（坦克 / 装甲车 / 潜水艇…）自绘 SVG */
+const SVG_ICON = {
+  tank:`<svg viewBox="0 0 96 56"><rect x="4" y="30" width="70" height="17" rx="8" fill="#6E7C5A"/><rect x="10" y="45" width="60" height="9" rx="4.5" fill="#4C5740"/><circle cx="20" cy="49" r="4" fill="#37402E"/><circle cx="36" cy="49" r="4" fill="#37402E"/><circle cx="52" cy="49" r="4" fill="#37402E"/><rect x="20" y="19" width="42" height="14" rx="6" fill="#84936C"/><rect x="30" y="7" width="24" height="12" rx="4" fill="#95A47B"/><rect x="54" y="10" width="40" height="5" rx="2.5" fill="#5C6949"/></svg>`,
+  apc:`<svg viewBox="0 0 96 56"><rect x="6" y="30" width="68" height="16" rx="5" fill="#5C6B52"/><rect x="12" y="44" width="56" height="8" rx="4" fill="#414C39"/><circle cx="22" cy="48" r="4" fill="#323A2B"/><circle cx="40" cy="48" r="4" fill="#323A2B"/><circle cx="58" cy="48" r="4" fill="#323A2B"/><rect x="18" y="18" width="40" height="13" rx="4" fill="#77875F"/><rect x="40" y="8" width="26" height="11" rx="3" fill="#8A9A70"/><rect x="66" y="14" width="24" height="4" rx="2" fill="#4E5A44"/></svg>`,
+  sub:`<svg viewBox="0 0 96 56"><ellipse cx="46" cy="32" rx="38" ry="13" fill="#4E6B7A"/><rect x="34" y="12" width="20" height="10" rx="3" fill="#5F8090"/><rect x="42" y="4" width="4" height="9" fill="#7A9AA8"/><circle cx="30" cy="32" r="5" fill="#8FC7D8"/><circle cx="48" cy="32" r="5" fill="#8FC7D8"/><circle cx="66" cy="32" r="5" fill="#8FC7D8"/><rect x="80" y="23" width="13" height="17" rx="3" fill="#3B5460"/></svg>`,
+  balloon:`<svg viewBox="0 0 96 56"><path d="M48 3c13 0 23 10 23 20 0 9-7 15-14 18H39c-7-3-14-9-14-18C25 13 35 3 48 3z" fill="#F08A9B"/><path d="M12 24h72" stroke="#fff" stroke-width="4" opacity=".7"/><rect x="41" y="43" width="14" height="10" rx="2.5" fill="#B98A5E"/><path d="M43 43V41M53 43V41" stroke="#8A6440" stroke-width="1.6"/></svg>`,
+  blimp:`<svg viewBox="0 0 96 56"><ellipse cx="44" cy="23" rx="33" ry="15" fill="#9FB6D6"/><path d="M38 8v30" stroke="#fff" stroke-width="3" opacity=".65"/><rect x="36" y="38" width="24" height="10" rx="3" fill="#5F7391"/><rect x="78" y="16" width="14" height="13" rx="3" fill="#7386A6"/><path d="M36 43H20" stroke="#8FA3C0" stroke-width="1.6"/></svg>`,
+  hover:`<svg viewBox="0 0 96 56"><path d="M16 32h60l-10 12H26z" fill="#7FA3C4"/><ellipse cx="46" cy="47" rx="42" ry="6" fill="#B7E2F2"/><rect x="34" y="18" width="28" height="14" rx="4" fill="#95B8D6"/><rect x="40" y="22" width="16" height="7" rx="2" fill="#DCEBF5"/><rect x="70" y="24" width="16" height="6" rx="3" fill="#6C8FB0"/></svg>`,
+  champ:`<svg viewBox="0 0 96 56"><path d="M18 26l16-11 12 8 12-8 16 11-5 16H23z" fill="#F2C14E"/><path d="M30 15l4 6-5 1zM66 15l-4 6 5 1z" fill="#E8A317"/><circle cx="34" cy="46" r="6" fill="#4A4A4A"/><circle cx="62" cy="46" r="6" fill="#4A4A4A"/><circle cx="34" cy="46" r="2.4" fill="#C9C9C9"/><circle cx="62" cy="46" r="2.4" fill="#C9C9C9"/><path d="M44 22h8v8h-8z" fill="#FFF0B8"/></svg>`
+};
+function iconHTML(icon, cls, style){
+  const st = style ? ` style="${style}"` : '';
+  if(icon.slice(0,4) === 'svg:') return `<span class="${cls} ridesvg"${st}>${SVG_ICON[icon.slice(4)] || ''}</span>`;
+  return `<span class="${cls}"${st}>${icon}</span>`;
+}
+const RIDE = (n, icon, name, hue) => ({n, icon, name, hue: hue | 0, rarity: lvlOf(n), price: 100 + n * 3});
+const RIDES = [
+  /* L1 普通 · M1–M20 日常出行 */
+  RIDE(1,'🚗','小轿车'), RIDE(2,'🚕','出租车'), RIDE(3,'🚙','越野车'), RIDE(4,'🚌','公交车'),
+  RIDE(5,'🚎','无轨电车'), RIDE(6,'🚐','面包车'), RIDE(7,'🚚','小卡车'), RIDE(8,'🚛','大货车'),
+  RIDE(9,'🛻','皮卡'), RIDE(10,'🚜','拖拉机'), RIDE(11,'🏍️','摩托车'), RIDE(12,'🛵','小踏板'),
+  RIDE(13,'🚲','自行车'), RIDE(14,'🛴','滑板车'), RIDE(15,'🛹','滑板'), RIDE(16,'🚓','警车'),
+  RIDE(17,'🚑','救护车'), RIDE(18,'🚒','消防车'), RIDE(19,'🚔','巡逻车'), RIDE(20,'🏎️','赛车'),
+  /* L2 精良 · M21–M40 轨道与水上 */
+  RIDE(21,'🚂','蒸汽火车'), RIDE(22,'🚃','火车车厢'), RIDE(23,'🚄','高铁'), RIDE(24,'🚅','特快列车'),
+  RIDE(25,'🚆','通勤列车'), RIDE(26,'🚇','地铁'), RIDE(27,'🚈','轻轨'), RIDE(28,'🚊','有轨电车'),
+  RIDE(29,'🚋','电车'), RIDE(30,'🚝','单轨列车'), RIDE(31,'🚞','山地火车'), RIDE(32,'🚍','城际巴士'),
+  RIDE(33,'⛵','帆船'), RIDE(34,'🚤','快艇'), RIDE(35,'🛥️','游艇'), RIDE(36,'⛴️','渡轮'),
+  RIDE(37,'🚢','大轮船'), RIDE(38,'🛶','独木舟'), RIDE(39,'🛟','救生艇'), RIDE(40,'🚣','划艇'),
+  /* L3 稀有 · M41–M60 航空与特别款 */
+  RIDE(41,'✈️','客机'), RIDE(42,'🛩️','小飞机'), RIDE(43,'🛫','起飞的飞机'), RIDE(44,'🛬','降落的飞机'),
+  RIDE(45,'🚁','直升机'), RIDE(46,'🪂','降落伞'), RIDE(47,'🚀','火箭'), RIDE(48,'🛸','飞碟'),
+  RIDE(49,'🛰️','人造卫星'), RIDE(50,'🚟','悬挂列车'), RIDE(51,'🚠','缆车'), RIDE(52,'🚡','吊椅索道'),
+  RIDE(53,'🚖','网约车'), RIDE(54,'🚘','迎面汽车'), RIDE(55,'🛺','三轮车'), RIDE(56,'🚨','警灯车'),
+  RIDE(57,'🛷','雪橇'), RIDE(58,'🦼','电动轮椅'), RIDE(59,'🦽','手动轮椅'), RIDE(60,'svg:tank','坦克'),
+  /* L4 史诗 · M61–M80 特种载具与专属涂装 */
+  RIDE(61,'svg:apc','装甲车'), RIDE(62,'svg:sub','潜水艇'), RIDE(63,'svg:balloon','热气球'), RIDE(64,'svg:blimp','飞艇'),
+  RIDE(65,'🎢','过山车'), RIDE(66,'🎠','旋转木马'), RIDE(67,'🎡','摩天轮'), RIDE(68,'🛝','滑梯'),
+  RIDE(69,'svg:hover','气垫船'), RIDE(70,'🚗','冰蓝跑车',190), RIDE(71,'🚕','紫晶出租',260), RIDE(72,'🚌','粉樱巴士',330),
+  RIDE(73,'🚚','青柠货车',100), RIDE(74,'🏎️','流金赛车',45), RIDE(75,'✈️','沧海客机',200), RIDE(76,'🚁','紫晶直升机',280),
+  RIDE(77,'🚀','碧霄火箭',160), RIDE(78,'⛵','绯樱帆船',320), RIDE(79,'🚂','湛蓝火车',220), RIDE(80,'🚜','鎏金拖拉机',60),
+  /* L5 传说 · M81–M100 星海专属 */
+  RIDE(81,'🛸','翡翠飞碟',160), RIDE(82,'🛰️','紫微卫星',280), RIDE(83,'🚀','烈焰火箭',30), RIDE(84,'✈️','樱花专机',320),
+  RIDE(85,'🚄','冰蓝高铁',190), RIDE(86,'🚢','蓝宝邮轮',220), RIDE(87,'🚁','翠羽直升机',120), RIDE(88,'🏎️','紫焰赛车',260),
+  RIDE(89,'🚗','烈焰红车',15), RIDE(90,'🚙','品红越野',300), RIDE(91,'🚌','湖水巴士',180), RIDE(92,'🛻','草绿皮卡',110),
+  RIDE(93,'🚒','紫霞消防车',270), RIDE(94,'🚑','薄荷救护车',150), RIDE(95,'⛵','金辉帆船',45), RIDE(96,'🚤','碧波快艇',200),
+  RIDE(97,'🎢','梦幻过山车',330), RIDE(98,'🛸','流光飞盘',45), RIDE(99,'🚀','星河火箭',280), RIDE(100,'svg:champ','王者战车')
+];
+const RIDE_BY_N = {};
+RIDES.forEach(r => { RIDE_BY_N[r.n] = r; });
+const rideOwned = n => !!S.garage[n];
+const rideUnlocked = n => S.free || isCleared(n);      /* 通关本模块后才有兑换资格 */
+function ownedCount(){ let c = 0; RIDES.forEach(r => { if(S.garage[r.n]) c++; }); return c; }
+/* 在车库兑换一辆车 */
+function buyRide(n){
+  const r = RIDE_BY_N[n];
+  if(!r) return {ok:false, msg:'没有这辆车'};
+  if(rideOwned(n)) return {ok:false, msg:'这辆车已经在车库里啦'};
+  if(!rideUnlocked(n)) return {ok:false, msg:`先通关 M${n} 全部 ${STAGES_PER_MOD} 关，才能兑换它哦～`};
+  if(S.coins < r.price) return {ok:false, msg:`还差 🪙 ${r.price - S.coins} 金币，再闯几关吧！`};
+  S.coins -= r.price;
+  S.garage[n] = true;
+  S.ride = n;
+  save(); paintTop();
+  sfxWin();
+  return {ok:true, msg:`🎉 ${r.icon.slice(0,4)==='svg:' ? '新车' : r.icon} ${r.name} 开回家啦！已设为座驾`};
+}
+/* 把已有的车设为当前座驾（只有已收集的车才能开） */
+function setRide(n){
+  if(!rideOwned(n)) return false;
+  S.ride = n; save(); paintTop();
+  return true;
+}
+/* =========================================================
+   v6：开车地图（10 张 · 逐张解锁 · 用座驾在场景里收集单词星星）
+   解锁双条件：① 已通关模块数 ≥ need  ② 金币 ≥ price
+   ========================================================= */
+const MAPS = [
+  {id:1, name:'城市街道', em:'🏙️', need:1,  price:0,   sky:'#B5D4F4', road:'#B4B2A9', road2:'#F1EFE8',
+   ground:'#D3D1C7', deco:'🏢', pickups:8,  tip:'红绿灯与斑马线，先练手感'},
+  {id:2, name:'校园小路', em:'🏫', need:3,  price:120, sky:'#CECBF6', road:'#B4B2A9', road2:'#FFFFFF',
+   ground:'#EAF3DE', deco:'🌳', pickups:9,  tip:'操场和花坛，注意减速带'},
+  {id:3, name:'森林公园', em:'🌳', need:6,  price:200, sky:'#9FE1CB', road:'#97C459', road2:'#EAF3DE',
+   ground:'#C0DD97', deco:'🌲', pickups:10, tip:'绕开树桩，穿过小木桥'},
+  {id:4, name:'海滩公路', em:'🏖️', need:10, price:280, sky:'#85B7EB', road:'#FAC775', road2:'#FAEEDA',
+   ground:'#EF9F27', deco:'🌴', pickups:11, tip:'沙地会打滑，慢一点'},
+  {id:5, name:'雪山弯道', em:'❄️', need:15, price:360, sky:'#B5D4F4', road:'#E6F1FB', road2:'#FFFFFF',
+   ground:'#F1EFE8', deco:'🏔️', pickups:12, tip:'冰面滑行，提前打方向'},
+  {id:6, name:'沙漠公路', em:'🌵', need:25, price:440, sky:'#FAC775', road:'#EF9F27', road2:'#FAEEDA',
+   ground:'#F0997B', deco:'🌵', pickups:13, tip:'沙丘起伏，坦克在这最好开'},
+  {id:7, name:'赛车场',   em:'🏁', need:40, price:520, sky:'#F09595', road:'#5F5E5A', road2:'#FFFFFF',
+   ground:'#B4B2A9', deco:'🏁', pickups:14, tip:'跑道计时，一圈比一圈快'},
+  {id:8, name:'太空轨道', em:'🚀', need:60, price:600, sky:'#26215C', road:'#534AB7', road2:'#AFA9EC',
+   ground:'#3C3489', deco:'🪐', pickups:15, tip:'失重漂浮，飞机的主场'},
+  {id:9, name:'海底世界', em:'🌊', need:80, price:680, sky:'#85B7EB', road:'#1D9E75', road2:'#9FE1CB',
+   ground:'#0F6E56', deco:'🐠', pickups:16, tip:'水下推进，潜水艇才能下潜'},
+  {id:10,name:'云端龙巢', em:'🐉', need:100,price:800, sky:'#AFA9EC', road:'#CECBF6', road2:'#FFFFFF',
+   ground:'#EEEDFE', deco:'🌈', pickups:18, tip:'云海彩虹，终极地图'}
+];
+const MAP_BY_ID = {};
+MAPS.forEach(m => { MAP_BY_ID[m.id] = m; });
+const mapCleared = id => !!(S.maps && S.maps[id] && S.maps[id].done);
+const mapOwned   = id => !!(S.maps && S.maps[id] && S.maps[id].owned);
+const mapStarsOf = id => (S.maps && S.maps[id]) ? (S.maps[id].stars | 0) : 0;
+const mapBestOf  = id => (S.maps && S.maps[id]) ? (S.maps[id].best | 0) : 0;
+const mapsCleared = () => MAPS.filter(m => mapCleared(m.id)).length;
+/* 已通关模块数（地图门槛用这个，不纯看金币，免得在 M1 刷钱直接跳到第 10 张图） */
+function clearedForMap(){ return S.free ? MODULES.length : clearedCount(); }
+function mapCondMet(id){ return clearedForMap() >= MAP_BY_ID[id].need; }
+/* 前置条件（≠ 已解锁）：上一张跑通了 + 模块数够 */
+function mapReady(id){
+  if(id <= 1) return true;
+  if(S.free) return true;
+  const prev = MAP_BY_ID[id - 1];
+  return mapCleared(prev.id) && mapCondMet(id);
+}
+/* 真正能玩的地图：第 1 张免费；其余要么已花钱买过，要么家长模式 */
+function mapUnlocked(id){
+  if(id <= 1) return true;
+  if(S.free) return true;
+  return mapOwned(id);
+}
+/* 买地图：双条件（上一张通关 + 已通关模块数够）+ 金币 */
+function buyMap(id){
+  const mp = MAP_BY_ID[id];
+  if(!mp) return {ok:false, msg:'没有这张地图'};
+  if(mapUnlocked(id)) return {ok:false, msg:'这张地图已经能开啦'};
+  if(!mapCondMet(id)) return {ok:false, msg:`先通关 ${mp.need} 个模块才能解锁 ${mp.name} 哦～`};
+  const prev = MAP_BY_ID[id - 1];
+  if(prev && !mapCleared(prev.id)) return {ok:false, msg:`先把「${prev.name}」跑通关吧～`};
+  if(S.coins < mp.price) return {ok:false, msg:`还差 🪙 ${mp.price - S.coins} 金币，再闯几关吧！`};
+  S.coins -= mp.price;
+  if(!S.maps) S.maps = {};
+  if(!S.maps[id]) S.maps[id] = {done:false, owned:false, stars:0, best:0, plays:0};
+  S.maps[id].owned = true;
+  save(); paintTop();
+  sfxWin();
+  return {ok:true, msg:`🎉 解锁新地图：${mp.em} ${mp.name}！`};
+}
+/* 跑完一张图：记录最佳成绩 + 发金币（重跑只按成绩梯度补差，不重复刷） */
+function finishMapRun(id, got, total, elapsedSec){
+  if(!S.maps) S.maps = {};
+  const rec = S.maps[id] || (S.maps[id] = {done:false, stars:0, best:0, plays:0});
+  const ratio = total ? got / total : 0;
+  const stars = ratio >= 1 ? 3 : ratio >= 0.7 ? 2 : ratio >= 0.4 ? 1 : 0;
+  const gotAll = got >= total;
+  const coinGain = got * 3 + (gotAll ? 40 + id * 6 : 0);
+  const firstAll = gotAll && !rec.done;
+  rec.plays = (rec.plays | 0) + 1;
+  if(stars > (rec.stars | 0)) rec.stars = stars;
+  if(got > (rec.best | 0)) rec.best = got;
+  if(firstAll) rec.done = true;
+  /* 首通全额发；重跑按新纪录补差（防止刷同一张图） */
+  let actual = coinGain;
+  if(rec.paid === undefined) rec.paid = 0;
+  if(!firstAll){
+    const prevPaid = rec.paid | 0;
+    actual = Math.max(0, coinGain - prevPaid);
+  }
+  rec.paid = Math.max(rec.paid | 0, coinGain);
+  S.coins += actual;
+  save(); paintTop();
+  return {stars, got, total, gotAll, firstAll, coinGain, actual, elapsedSec,
+          unlockedNext: !!(MAP_BY_ID[id + 1]) && gotAll};
+}
+
+/* =========================================================
+   v5：10 个关卡 = 10 种玩法
+   ========================================================= */
+const GAMES = [
+  {key:'find',  ic:'🔊', name:'听音找图', desc:'听单词，点出对应的图'},
+  {key:'pair',  ic:'🃏', name:'记忆配对', desc:'把图和单词配成一对'},
+  {key:'bird',  ic:'🐦', name:'救小鸟',   desc:'按顺序点字母，拼出单词'},
+  {key:'pick',  ic:'🎯', name:'看图选词', desc:'看图，点出正确的英文'},
+  {key:'scram', ic:'🧩', name:'句子拼图', desc:'听句子，把词卡排好顺序'},
+  {key:'listen',ic:'🎧', name:'听音选中文', desc:'听单词，点出中文意思'},
+  {key:'tpr',   ic:'🕺', name:'听指令',   desc:'听指令，点出那个动作'},
+  {key:'sort',  ic:'🔤', name:'字母排序', desc:'把打乱的字母按顺序排好'},
+  {key:'mole',  ic:'💥', name:'打地鼠',   desc:'看到目标词就点它'},
+  {key:'boss',  ic:'👑', name:'混合挑战', desc:'前面玩过的题型混在一起'}
+];
+function gameOf(s){ return GAMES[(s - 1) % GAMES.length]; }
+/* 有些玩法要「纯字母单词」，数字/符号类模块没有 → 自动降级为「看图选词」 */
+function stageSpellPool(m){
+  return WORDS.filter(w => w.m === m && /^[a-z]+$/.test(w.en) && w.en.length >= 3);
+}
+function stageGame(m, s){
+  const g = gameOf(s);
+  if((g.key === 'bird' || g.key === 'sort') && !stageSpellPool(m).length) return GAMES[3];
+  return g;
+}
+function stageQLimit(s){ return s === STAGES_PER_MOD ? Q_BOSS : Q_PER_STAGE; }
+
+/* =========================================================
+   v5：关卡会话（一关打完就结算）
+   ========================================================= */
+let SES = null;
+function startStage(m, s){
+  if(!stageOpen(m, s)){ toast(`先通过第 ${s - 1} 关，才能玩这一关哦～`); return false; }
+  const g = stageGame(m, s);
+  SES = {m, s, key:g.key, gameKey:g.key, g, total:stageQLimit(s), i:0, right:0, wrong:0, coins:0,
+         done:false, replay:stageDone(m, s)};
+  go('play');
+  return true;
+}
+function paintSession(){
+  const bar = document.getElementById('sesBar');
+  if(!bar) return;
+  if(!SES){ bar.innerHTML = ''; return; }
+  const pct = SES.free ? 0 : Math.round(SES.i / SES.total * 100);
+  const prog = SES.free ? `已答对 ${SES.i} 题` : `${SES.i}/${SES.total}`;
+  bar.innerHTML = `
+    <div class="ses">
+      <span>${SES.g.ic} ${SES.free ? '自由练习' : `M${SES.m} · 第 ${SES.s}/${STAGES_PER_MOD} 关`}</span>
+      <span class="b"><i style="width:${pct}%"></i></span>
+      <span>${prog} 🪙 ${SES.coins}</span>
+      <button class="btn sm ghost" id="sesQuit"
+        style="min-height:32px;padding:0 12px;font-size:12px">退出</button>
+    </div>`;
+  const q = bar.querySelector('#sesQuit');
+  if(q) q.addEventListener('click', () => { SES = null; paintSession(); go('map'); toast('已退出这一关'); });
+}
+/* 关卡结算 */
+function sesFinish(){
+  if(!SES || SES.done) return;
+  SES.done = true;
+  const snap = {m:SES.m, s:SES.s, g:SES.g, total:SES.total, right:SES.right,
+                wrong:SES.wrong, coins:SES.coins, replay:SES.replay};
+  const stars = snap.wrong === 0 ? 3 : snap.wrong <= 2 ? 2 : 1;
+  const key = stageKey(snap.m, snap.s);
+  const rec = stageRec(snap.m, snap.s);
+  const prevStars = rec ? (rec.stars | 0) : 0;
+  const best = Math.max(stars, prevStars);
+  S.stages[key] = {done:true, stars:best, plays:((rec && rec.plays) | 0) + 1, at:Date.now()};
+  snap.stars = stars;
+  snap.newBest = best > prevStars;
+  /* 通关奖励：只在第一次通过这一关时给 */
+  snap.bonus = 0;
+  if(!snap.replay){ snap.bonus = 10 + lvlOf(snap.m) * 2; S.coins += snap.bonus; }
+  save();
+  snap.justCleared = checkModuleClear(snap.m);
+  if(snap.justCleared){ snap.clearBonus = 50 + lvlOf(snap.m) * 15; S.coins += snap.clearBonus; save(); }
+  refreshChip(snap.m); paintChips(); paintTop();
+  setTimeout(() => sesResult(snap), 850);
+}
+function sesResult(k){
+  sfxWin();
+  const nextS = k.s < STAGES_PER_MOD ? k.s + 1 : 0;
+  const car = RIDE_BY_N[k.m];
+  const carReady = rideUnlocked(k.m) && !rideOwned(k.m);
+  showMask(`
+      <div class="big">${k.stars === 3 ? '🌟' : k.stars === 2 ? '👏' : '💪'}</div>
+      <h2>第 ${k.s} 关通过！</h2>
+      <div class="stars">${[0,1,2].map(i => `<span class="${i < k.stars ? '' : 'off'}">⭐</span>`).join('')}</div>
+      <div class="sub" style="margin:6px 0 0">${k.g.ic} ${k.g.name} · 共 ${k.total} 题，
+        ${k.wrong ? `答错 <b>${k.wrong}</b> 次` : '一路全对'} · 金币 <b>+${k.coins + k.bonus + (k.clearBonus || 0)}</b></div>
+      <div class="coinrow">
+        <div class="coinbox">本关赚到<b>🪙 ${k.coins + k.bonus + (k.clearBonus || 0)}</b></div>
+        <div class="coinbox">金币余额<b>🪙 ${S.coins}</b></div>
+        ${k.newBest && k.stars > 0 ? `<div class="coinbox">本关纪录<b>⭐ ${k.stars}</b></div>` : ''}
+      </div>
+      ${k.coins + k.bonus + (k.clearBonus || 0) > k.coins
+        ? `<div class="sub" style="margin:8px 0 0">🎁 含第一次通过的额外奖励${k.clearBonus ? ` + 模块通关大奖 🪙 ${k.clearBonus}` : ''}</div>` : ''}
+      ${carReady ? `<div class="unlock">🚗 可兑换本模块座驾：<b>${car.name}</b>（🪙 ${car.price}）</div>` : ''}
+      <div class="row">
+        ${nextS ? `<button class="btn sm" id="rNext">第 ${nextS} 关 →</button>` : `<button class="btn sm" id="rFinish">完成本模块 →</button>`}
+        <button class="btn sm ghost" id="rAgain">再玩一次</button>
+        <button class="btn sm ghost" id="rMap">🗺️ 关卡地图</button>
+        <button class="btn sm ghost" id="rDrive">🛣️ 开车兜风</button>
+        ${carReady ? `<button class="btn sm ghost" id="rGarage">🚗 去车库</button>` : ''}
+      </div>`, (box, close) => {
+    box.querySelector('#rAgain').addEventListener('click', () => { close(); startStage(k.m, k.s); });
+    box.querySelector('#rMap').addEventListener('click', () => { close(); setScope('m' + k.m); go('map'); });
+    box.querySelector('#rDrive').addEventListener('click', () => { close(); go('drive'); });
+    const gb = box.querySelector('#rGarage');
+    if(gb) gb.addEventListener('click', () => { close(); go('garage'); });
+    const nx = box.querySelector('#rNext');
+    if(nx) nx.addEventListener('click', () => { close(); startStage(k.m, k.s + 1); });
+    const fn = box.querySelector('#rFinish');
+    if(fn) fn.addEventListener('click', () => {
+      close();
+      if(k.justCleared) celebrate(k.m);
+      else { setScope('m' + currentModule()); go('map'); }
+    });
+  });
+}
+
+/* =========================================================
+   v5：闯关地图（一个模块的 10 个关卡）
+   ========================================================= */
+function mountMap(root){
+  const m = scope[0] === 'm' ? Number(scope.slice(1)) : currentModule();
+  const mod = modInfo(m);
+  const open = isUnlocked(m);
+  const doneN = stagesDoneIn(m);
+  const car = RIDE_BY_N[m];
+  const carState = rideOwned(m) ? `<span style="color:#2F6B45">✅ 已收入车库</span>`
+    : rideUnlocked(m) ? `<span style="color:#B8860B">🪙 ${car.price} 金币可兑换</span>`
+    : `<span>🔒 通关本模块全部 ${STAGES_PER_MOD} 关即可兑换</span>`;
+
+  root.innerHTML = `
+    <div class="card">
+      <div class="modhead">
+        ${iconHTML(car.icon, 'car' + (open ? '' : ' locked'))}
+        <div class="txt">
+          <b>M${m} · ${mod.title}</b>
+          <span>${open ? `L${lvlOf(m)} ${LEVELS.find(x => x.k === lvlOf(m)).name} ·
+            ${moduleCount(m)} 个单词 · 已过 <b>${doneN}/${STAGES_PER_MOD}</b> 关 · ⭐ ${moduleStars(m)}`
+            : `🔒 还没解锁（先通关 M${m - 1}）`}</span>
+          <span>🚗 本模块座驾：<b>${car.name}</b> · ${carState}</span>
+        </div>
+      </div>
+      <div class="pbar"><i style="width:${doneN / STAGES_PER_MOD * 100}%"></i></div>
+      <div class="sub" style="margin:0">一关一种玩法，每关 ${Q_PER_STAGE} 题（第 ${STAGES_PER_MOD} 关 Boss ${Q_BOSS} 题）。
+        答对得 🪙 金币，${STAGES_PER_MOD} 关全过就解锁下一模块和这辆座驾。</div>
+    </div>
+
+    <div class="card">
+      <h2>🗺️ 关卡地图</h2>
+      <div class="stages">
+        ${GAMES.map((g0, i) => {
+          const s = i + 1;
+          const g = stageGame(m, s);
+          const isDone = stageDone(m, s);
+          const isOpen = stageOpen(m, s);
+          const st = stageStars(m, s);
+          const cls = isDone ? 'done' : (isOpen ? 'doing' : 'lock');
+          const tail = isDone ? `<span class="st">⭐ ${st}</span>`
+            : isOpen ? `<span class="st">▶️ 去玩</span>` : `<span class="st">🔒</span>`;
+          return `<button class="stage ${cls}" data-stage="${s}">
+              <span class="no">${isDone ? '✓' : s}</span>
+              <span class="info"><b>${g.ic} ${g.name}</b>
+                <i>${isDone ? `已通过 · ${Q_PER_STAGE} 题` : g.desc}</i></span>
+              ${tail}</button>`;
+        }).join('')}
+      </div>
+      ${open ? '' : '<div class="note-lock" style="margin-top:12px">🔒 本模块还没解锁，先回去把前面的关卡打通吧。</div>'}
+    </div>
+
+    <div class="card">
+      <h2>🎮 自由练习</h2>
+      <div class="sub">不计关卡进度，也不影响闯关，纯粹拿来玩。用 <b>${scopeLabel()}</b> 范围内的词。</div>
+      <div class="row">
+        ${GAMES.slice(0, 9).map(g0 => `<button class="btn sm ghost" data-free="${g0.key}">${g0.ic} ${g0.name}</button>`).join('')}
+      </div>
+    </div>`;
+
+  root.querySelectorAll('[data-stage]').forEach(b => b.addEventListener('click', () => {
+    const s = Number(b.dataset.stage);
+    if(!stageOpen(m, s)){ toast(`先通过第 ${s - 1} 关哦～`); return; }
+    startStage(m, s);
+  }));
+  root.querySelectorAll('[data-free]').forEach(b => b.addEventListener('click', () => {
+    startFreePlay(b.dataset.free, m);
+  }));
+}
+/* 自由练习：用指定玩法玩一整轮（不记关卡） */
+function startFreePlay(key, m){
+  const g = GAMES.find(x => x.key === key) || GAMES[0];
+  SES = {m, s:1, key:g.key, gameKey:g.key, g, total:Infinity, i:0, right:0, wrong:0, coins:0,
+         done:false, replay:true, free:true};
+  go('play');
+}
+
+/* =========================================================
+   v5：车库（100 辆交通工具）
+   ========================================================= */
+let garageFilter = 'all';
+function mountGarage(root){
+  const owned = ownedCount();
+  const rows = RIDES.filter(r => {
+    if(garageFilter === 'own') return rideOwned(r.n);
+    if(garageFilter === 'buy') return rideUnlocked(r.n) && !rideOwned(r.n);
+    if(garageFilter === 'lock') return !rideUnlocked(r.n);
+    return true;
+  });
+  const riding = RIDE_BY_N[S.ride];
+  root.innerHTML = `
+    <div class="card">
+      <div class="garage-top">
+        <span class="coinbig">🪙 ${S.coins}</span>
+        <span class="sub" style="margin:0">已收集 <b>${owned}/${RIDES.length}</b> 辆</span>
+        ${riding ? `<span class="sub" style="margin:0">当前座驾：<b>${riding.name}</b></span>` : ''}
+      </div>
+      <div class="sub" style="margin:10px 0 0">
+        每通关一个模块（${STAGES_PER_MOD} 关全过）就解锁那辆专属交通工具，再用金币把它换回家。
+        点已收集的车可以设为座驾，换好后就能开进 🛣️ 开车地图里兜风。
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn sm" data-go-drive="1">🛣️ 开 ${riding ? riding.name : '我的车'} 去兜风</button>
+        ${[['all',`全部 ${RIDES.length}`],['own',`✅ 已收集 ${owned}`],
+           ['buy',`🪙 可兑换 ${RIDES.filter(r => rideUnlocked(r.n) && !rideOwned(r.n)).length}`],
+           ['lock',`🔒 未解锁 ${RIDES.filter(r => !rideUnlocked(r.n)).length}`]]
+          .map(([k, t]) => `<button class="btn sm ${garageFilter === k ? '' : 'ghost'}" data-f="${k}">${t}</button>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="gwrap">
+        ${rows.length ? `<div class="grid-car">${rows.map(r => vcard(r)).join('')}</div>`
+                      : '<div class="empty-hint">这一档还没有车，去闯关赚金币吧 🚗</div>'}
+      </div>
+    </div>`;
+
+  root.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => {
+    garageFilter = b.dataset.f; mountGarage(root);
+  }));
+  const db = root.querySelector('[data-go-drive]');
+  if(db) db.addEventListener('click', () => go('drive'));
+  root.querySelectorAll('[data-ride]').forEach(b => b.addEventListener('click', () => {
+    const n = Number(b.dataset.ride);
+    const r = RIDE_BY_N[n];
+    if(rideOwned(n)){
+      setRide(n);
+      toast(`🚗 座驾换成 ${r.name} 啦！`);
+      mountGarage(root);
+      return;
+    }
+    if(!rideUnlocked(n)){ toast(`先通关 M${n} 全部 ${STAGES_PER_MOD} 关，才能兑换它～`); return; }
+    const res = buyRide(n);
+    toast(res.msg);
+    if(res.ok) mountGarage(root);
+  }));
+}
+function vcard(r){
+  const isOwn = rideOwned(r.n), can = rideUnlocked(r.n), isRide = S.ride === r.n;
+  const cls = 'vcard' + (isOwn ? ' owned' : can ? '' : ' lock') + (isRide ? ' riding' : '');
+  const hue = r.hue ? ` style="filter:hue-rotate(${r.hue}deg)"` : '';
+  const price = isOwn ? (isRide ? '座驾中' : '设为座驾')
+    : can ? `🪙 ${r.price}` : `🔒 M${r.n} 通关后`;
+  return `<button class="${cls}" data-ride="${r.n}">
+      <span class="rbadge r${r.rarity}">${RARITY[r.rarity]}</span>
+      ${iconHTML(r.icon, 'ic', r.hue ? `filter:hue-rotate(${r.hue}deg)` : '')}
+      <span class="nm">M${r.n} ${r.name}</span>
+      <span class="pr">${price}</span>
+    </button>`;
+}
+
+
+/* =========================================================
+   v6：地图车库页 🛣️
+   ========================================================= */
+function mountDrive(root){
+  const riding = RIDE_BY_N[S.ride] || null;
+  const open = ownedCount();
+  const ridingLine = riding
+    ? `正在开：<b>${riding.name}</b>（M${riding.n}）`
+    : `还没选座驾，去车库换一辆吧`;
+  root.innerHTML = `
+    <div class="card">
+      <h2>🛣️ 开车地图</h2>
+      <div class="sub">
+        换来的车可以开进地图兜风 —— 撞到路上的<b>单词星星</b>就会读出英文和中文，
+        顺便把单词练了。已解锁 <b>${mapsCleared()}</b>/${MAPS.length} 张地图 · 已通关
+        <b>${clearedForMap()}</b> 个模块 · 🪙 <b>${S.coins}</b>
+      </div>
+      <div class="row">
+        ${riding ? `<button class="btn sm" data-drive="${[...MAPS].reverse().find(m => mapUnlocked(m.id))?.id || 1}">
+          ${iconHTML(riding.icon, 'ic2', riding.hue ? `filter:hue-rotate(${riding.hue}deg)` : '')} 开我的${riding.name}去兜风</button>`
+        : `<button class="btn sm ghost" data-go-garage="1">🚗 先去车库挑一辆车</button>`}
+      </div>
+      <div class="dtip">${ridingLine}${open ? ` · 车库已有 ${open} 辆` : ''}</div>
+    </div>
+
+    <div class="card">
+      <h2>${MAPS.length} 张地图</h2>
+      <div class="mgrid">
+        ${MAPS.map(mp => {
+          const isOpen = mapUnlocked(mp.id);
+          const isClear = mapCleared(mp.id);
+          const ready = mapReady(mp.id);
+          const cls = 'mcard' + (isOpen ? ' open' : ' lock') + (isClear ? ' clear' : '');
+          const cond = isOpen
+            ? (isClear ? `🏁 已通关 · ⭐ ${mapStarsOf(mp.id)}` : `🪙 ${mp.price} · 点击开跑`)
+            : ready ? `🪙 ${mp.price} 金币解锁`
+                    : `🔒 通关 ${mp.need} 个模块`;
+          return `<button class="${cls}" data-map="${mp.id}">
+              <span class="sky" style="background:${mp.sky}"></span>
+              <span class="em">${isOpen ? mp.em : '🔒'}</span>
+              <span class="nm">${mp.id}. ${mp.name}</span>
+              <span class="cond">${cond}</span>
+            </button>`;
+        }).join('')}
+      </div>
+      <div class="dtip" style="text-align:left;margin-top:10px">
+        🔓 解锁规则：<b>先跑通上一张地图</b>，并且<b>已通关模块数</b>达到要求，再花金币买票。
+        这样孩子不会在 M1 刷够钱就跳到第 10 张图。
+      </div>
+    </div>`;
+
+  root.querySelectorAll('[data-map]').forEach(b => b.addEventListener('click', () => {
+    const id = Number(b.dataset.map);
+    if(mapUnlocked(id)){ startMapRun(id); return; }
+    if(!mapCondMet(id)){ toast(`先通关 ${MAP_BY_ID[id].need} 个模块才能解锁 ${MAP_BY_ID[id].name} 哦～`); return; }
+    const prev = MAP_BY_ID[id - 1];
+    if(prev && !mapCleared(prev.id)){ toast(`先把「${prev.name}」跑通关吧～`); return; }
+    const r = buyMap(id);
+    toast(r.msg);
+    if(r.ok){ sfxWin(); paintTop(); setTimeout(() => mountDrive(root), 600); }
+    else mountDrive(root);
+  }));
+  root.querySelectorAll('[data-drive]').forEach(b => b.addEventListener('click', () => {
+    startMapRun(Number(b.dataset.drive));
+  }));
+  const gb = root.querySelector('[data-go-garage]');
+  if(gb) gb.addEventListener('click', () => go('garage'));
+}
+
+/* =========================================================
+   v6：驾驶引擎（Canvas 俯视 2D）
+   目标：撞齐路上所有「单词星星」→ 开回起点 → 通关 + 金币
+   ========================================================= */
+const DRIVE = {
+  id:1, raf:0, t:0, last:0, keys:{}, joy:{x:0,y:0}, phase:'idle',
+  car:{x:0,y:0,a:0,v:0,steer:0}, pickups:[], got:0, w:0, h:0,
+  startedAt:0, decos:[], obstacles:[], bound:{w:0,h:0}, hand:{x:0,y:0}
+};
+let driveRAF = 0;
+
+/* 把地图 + 座驾渲染成一个小 SVG 图标，用于结算层/卡片 */
+function carBadge(ride, size){
+  const s = size || 34;
+  if(!ride) return `<span style="font-size:${s}px">🚗</span>`;
+  const hue = ride.hue ? `filter:hue-rotate(${ride.hue}deg);` : '';
+  if(ride.icon.slice(0,4) === 'svg:'){
+    return `<span style="display:inline-block;width:${s * 1.7}px;height:${s}px;${hue}">${SVG_ICON[ride.icon.slice(4)] || ''}</span>`;
+  }
+  return `<span style="font-size:${s}px;${hue}">${ride.icon}</span>`;
+}
+
+/* 世界比屏幕大：车在里面跑，镜头跟着走 */
+const DRIVE_WORLD_W = 900, DRIVE_WORLD_H = 1300;
+
+function startMapRun(id){
+  if(!S.ride || !rideOwned(S.ride)){
+    toast('先去车库换一辆车，才能开车兜风哦～');
+    go('garage');
+    return;
+  }
+  DRIVE.id = id;
+  DRIVE.phase = 'ready';
+  DRIVE.got = 0;
+  DRIVE.t = 0;
+  DRIVE.startedAt = 0;
+  DRIVE.keys = {}; DRIVE.joy = {x:0,y:0};
+  buildMapWorld(id);
+  go('drive-run');
+}
+function buildMapWorld(id){
+  const mp = MAP_BY_ID[id];
+  const pool = unlockedWords();
+  const words = shuffle(pool.length >= mp.pickups ? pool : WORDS).slice(0, mp.pickups);
+  const W = DRIVE_WORLD_W, H = DRIVE_WORLD_H;
+  /* 沿路撒星星：用一条环状路线，均匀分布 */
+  const n = words.length;
+  const cx = W / 2, cy = H / 2, rx = W * 0.34, ry = H * 0.38;
+  DRIVE.pickups = words.map((w, i) => {
+    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+    const jitter = (i % 2 ? 1 : -1) * (18 + (i % 3) * 9);
+    return {
+      id: 'mp' + i, w,
+      x: cx + Math.cos(a) * (rx + jitter),
+      y: cy + Math.sin(a) * (ry + jitter),
+      r: 26, hit: false, pulse: Math.random() * Math.PI * 2
+    };
+  });
+  /* 装饰物（不挡路，纯氛围） */
+  DRIVE.decos = [];
+  for(let i = 0; i < 26; i++){
+    DRIVE.decos.push({
+      x: 40 + Math.random() * (W - 80),
+      y: 40 + Math.random() * (H - 80),
+      em: mp.deco, s: 22 + Math.random() * 16, rot: (Math.random() - .5) * .5
+    });
+  }
+  /* 障碍：沙丘 / 冰面这类做成"减速带"而不是硬墙，避免小孩卡住 */
+  DRIVE.bound = {w: W, h: H};
+  DRIVE.car = {x: cx, y: cy + ry + 120, a: -Math.PI / 2, v: 0, steer: 0};
+  DRIVE.home = {x: cx, y: cy + ry + 120, r: 40};
+  DRIVE.w = W; DRIVE.h = H;
+}
+
+function mountDriveRun(root){
+  const mp = MAP_BY_ID[DRIVE.id];
+  const car = RIDE_BY_N[S.ride] || null;
+  root.innerHTML = `
+    <div class="dhud">
+      <span>${mp.em} ${mp.name}</span>
+      <span class="sp" id="dGot">星星 <b>0</b>/${DRIVE.pickups.length}</span>
+      <span id="dTime">⏱ 0.0s</span>
+    </div>
+    <div class="drivewrap" id="dWrap">
+      <canvas id="dCanvas"></canvas>
+    </div>
+    <div class="pad">
+      <button data-dir="up">⬆️</button>
+      <button class="mid" data-horn="1">📣</button>
+      <button data-dir="down">⬇️</button>
+      <button data-dir="left">↩️</button>
+      <button class="mid" id="dExit">退出</button>
+      <button data-dir="right">↪️</button>
+    </div>
+    <div class="dtip">收集全部 <b>${DRIVE.pickups.length}</b> 颗单词星星，再开回 <b>🏠 起点</b> 就通关。
+      撞到星星会读出声音，跟着念一遍吧！</div>`;
+
+  const cv = root.querySelector('#dCanvas');
+  const wrap = root.querySelector('#dWrap');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cssW = Math.min(wrap.clientWidth || 380, 560);
+  const cssH = Math.round(cssW * 1.05);
+  cv.width = Math.round(cssW * dpr);
+  cv.height = Math.round(cssH * dpr);
+  cv.style.width = cssW + 'px';
+  cv.style.height = cssH + 'px';
+  DRIVE.ctx = cv.getContext('2d');
+  DRIVE.dpr = dpr; DRIVE.cw = cssW; DRIVE.ch = cssH;
+  DRIVE.phase = 'play';
+  DRIVE.startedAt = performance.now();
+
+  /* 键盘 */
+  DRIVE.keyHandler = e => {
+    const k = e.key.toLowerCase();
+    const map = {arrowup:'up', w:'up', arrowdown:'down', s:'down', arrowleft:'left', a:'left', arrowright:'right', d:'right'};
+    if(map[k]){ DRIVE.keys[map[k]] = true; e.preventDefault(); }
+  };
+  DRIVE.keyUp = e => {
+    const k = e.key.toLowerCase();
+    const map = {arrowup:'up', w:'up', arrowdown:'down', s:'down', arrowleft:'left', a:'left', arrowright:'right', d:'right'};
+    if(map[k]){ DRIVE.keys[map[k]] = false; e.preventDefault(); }
+  };
+  window.addEventListener('keydown', DRIVE.keyHandler);
+  window.addEventListener('keyup', DRIVE.keyUp);
+
+  /* 触屏方向键 */
+  root.querySelectorAll('[data-dir]').forEach(b => {
+    const d = b.dataset.dir;
+    const on = e => { e.preventDefault(); DRIVE.keys[d] = true; };
+    const off = e => { e.preventDefault(); DRIVE.keys[d] = false; };
+    b.addEventListener('pointerdown', on);
+    b.addEventListener('pointerup', off);
+    b.addEventListener('pointercancel', off);
+    b.addEventListener('pointerleave', off);
+  });
+  root.querySelector('[data-horn]').addEventListener('click', () => { sfxHonk(); });
+  root.querySelector('#dExit').addEventListener('click', () => quitDriveRun());
+  window.addEventListener('blur', () => { DRIVE.keys = {}; });
+
+  cancelAnimationFrame(driveRAF);
+  DRIVE.last = performance.now();
+  driveRAF = requestAnimationFrame(driveLoop);
+}
+
+function driveLoop(now){
+  const dt = Math.min((now - DRIVE.last) / 1000, 0.05);
+  DRIVE.last = now;
+  if(DRIVE.phase !== 'play') return;
+  DRIVE.t += dt;
+  stepDrive(dt);
+  renderDrive();
+  const g = document.getElementById('dGot');
+  if(g) g.innerHTML = `星星 <b>${DRIVE.got}</b>/${DRIVE.pickups.length}`;
+  const tm = document.getElementById('dTime');
+  if(tm) tm.textContent = '⏱ ' + ((now - DRIVE.startedAt) / 1000).toFixed(1) + 's';
+  driveRAF = requestAnimationFrame(driveLoop);
+}
+
+function stepDrive(dt){
+  const mp = MAP_BY_ID[DRIVE.id];
+  const c = DRIVE.car;
+  const K = DRIVE.keys;
+  const up = !!(K.up), down = !!(K.down), left = !!(K.left), right = !!(K.right);
+  /* 油门 / 倒车 */
+  const acc = up ? 260 : 0;
+  const brake = down ? 300 : 0;
+  if(up) c.v += acc * dt;
+  else if(down) c.v -= brake * dt;
+  else c.v *= (1 - 1.6 * dt);                 /* 自然减速 */
+  /* 不同地图有不同摩擦（沙地滑、冰面滑） */
+  const grip = mp.id === 4 ? 0.9 : mp.id === 5 ? 0.6 : 1.5;
+  if(!up && !down) c.v *= (1 - (grip - 1) * dt * 0.8);
+  c.v = Math.max(-150, Math.min(300, c.v));
+  /* 转向：速度越快转得越钝，像真车 */
+  const steerRate = 2.4 * (0.35 + Math.min(Math.abs(c.v) / 220, 1) * 0.65);
+  if(left)  c.steer -= steerRate * dt * 3;
+  if(right) c.steer += steerRate * dt * 3;
+  c.steer *= (1 - 3.2 * dt);
+  c.steer = Math.max(-1, Math.min(1, c.steer));
+  c.a += c.steer * dt * 3.2 * (c.v >= 0 ? 1 : -1);
+  c.x += Math.cos(c.a) * c.v * dt;
+  c.y += Math.sin(c.a) * c.v * dt;
+  /* 边界：世界边界软回弹 */
+  const pad = 34;
+  if(c.x < pad){ c.x = pad; c.v *= 0.5; }
+  if(c.x > DRIVE.bound.w - pad){ c.x = DRIVE.bound.w - pad; c.v *= 0.5; }
+  if(c.y < pad){ c.y = pad; c.v *= 0.5; }
+  if(c.y > DRIVE.bound.h - pad){ c.y = DRIVE.bound.h - pad; c.v *= 0.5; }
+  /* 撞星星 */
+  for(const p of DRIVE.pickups){
+    if(p.hit) continue;
+    const d = Math.hypot(p.x - c.x, p.y - c.y);
+    if(d < p.r + 20){
+      p.hit = true; DRIVE.got++;
+      speak(p.w.en);
+      sfxRight();
+      toast(`${p.w.emoji} ${p.w.en} — ${p.w.zh}`);
+      record(p.w.id, p.w.en, true);
+      if(DRIVE.got >= DRIVE.pickups.length){
+        DRIVE.phase = 'return';
+        toast('全部收齐！开回 🏠 起点就通关 🏁');
+        sfxWin();
+      }
+    }
+  }
+  /* 回起点落定 */
+  if(DRIVE.phase === 'return'){
+    const d = Math.hypot(DRIVE.home.x - c.x, DRIVE.home.y - c.y);
+    if(d < DRIVE.home.r + 16 && Math.abs(c.v) < 120){
+      DRIVE.phase = 'done';
+      const secs = (performance.now() - DRIVE.startedAt) / 1000;
+      const res = finishMapRun(DRIVE.id, DRIVE.got, DRIVE.pickups.length, secs);
+      cancelAnimationFrame(driveRAF);
+      setTimeout(() => mapResult(res), 260);
+    }
+  }
+}
+
+function renderDrive(){
+  const ctx = DRIVE.ctx;
+  if(!ctx) return;
+  const mp = MAP_BY_ID[DRIVE.id];
+  const c = DRIVE.car;
+  const dpr = DRIVE.dpr, cw = DRIVE.cw, ch = DRIVE.ch;
+  /* 镜头：以车为中心，限制在世界范围内 */
+  const camX = Math.max(cw / 2, Math.min(DRIVE.bound.w - cw / 2, c.x));
+  const camY = Math.max(ch / 2, Math.min(DRIVE.bound.h - ch / 2, c.y));
+  const ox = cw / 2 - camX, oy = ch / 2 - camY;
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, cw, ch);
+  /* 背景地面 */
+  ctx.fillStyle = mp.ground;
+  ctx.fillRect(0, 0, cw, ch);
+
+  ctx.save();
+  ctx.translate(ox, oy);
+  /* 道路：环状跑道 */
+  const W = DRIVE.bound.w, H = DRIVE.bound.h;
+  ctx.strokeStyle = mp.road;
+  ctx.lineWidth = 92;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.ellipse(W / 2, H / 2, W * 0.34, H * 0.38, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  /* 路中间虚线 */
+  ctx.strokeStyle = mp.road2;
+  ctx.lineWidth = 4;
+  ctx.setLineDash([20, 18]);
+  ctx.beginPath();
+  ctx.ellipse(W / 2, H / 2, W * 0.34, H * 0.38, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  /* 装饰 */
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for(const d of DRIVE.decos){
+    ctx.save();
+    ctx.translate(d.x, d.y);
+    ctx.rotate(d.rot);
+    ctx.globalAlpha = 0.85;
+    ctx.font = d.s + 'px serif';
+    ctx.fillText(d.em, 0, 0);
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+
+  /* 起点 */
+  const hm = DRIVE.pickups.length ? DRIVE.home : DRIVE.home;
+  ctx.beginPath();
+  ctx.arc(hm.x, hm.y, hm.r, 0, Math.PI * 2);
+  ctx.fillStyle = DRIVE.phase === 'return' ? 'rgba(255,201,60,.55)' : 'rgba(255,255,255,.6)';
+  ctx.fill();
+  ctx.strokeStyle = '#B8860B';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.font = '26px serif';
+  ctx.fillText('🏠', hm.x, hm.y + 1);
+
+  /* 单词星星 */
+  for(const p of DRIVE.pickups){
+    if(p.hit) continue;
+    p.pulse += 0.07;
+    const s = 1 + Math.sin(p.pulse) * 0.07;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.scale(s, s);
+    ctx.beginPath();
+    ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,.92)';
+    ctx.fill();
+    ctx.strokeStyle = '#FFC93C';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.font = '24px serif';
+    ctx.fillText(p.w.emoji, 0, -1);
+    ctx.font = '700 11px -apple-system,sans-serif';
+    ctx.fillStyle = '#5A4A5A';
+    ctx.fillText(p.w.en.length > 8 ? p.w.en.slice(0, 8) : p.w.en, 0, p.r + 11);
+    ctx.restore();
+  }
+
+  /* 车身：直接用 emoji / SVG 图标画在 canvas 上 */
+  const ride = RIDE_BY_N[S.ride];
+  ctx.save();
+  ctx.translate(c.x, c.y);
+  ctx.rotate(c.a + Math.PI / 2);
+  if(ride){
+    if(ride.icon.slice(0,4) === 'svg:'){
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(-16, -20, 32, 40, 8) : ctx.rect(-16, -20, 32, 40);
+      ctx.fillStyle = '#84936C';
+      ctx.fill();
+      ctx.strokeStyle = '#4C5740';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }else{
+      if(hue) ctx.filter = `hue-rotate(${ride.hue}deg)`;
+      ctx.font = '40px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ride.icon, 0, 0);
+      ctx.filter = 'none';
+    }
+  }
+  ctx.restore();
+  ctx.restore();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  /* 小地图（右上, 常驻不随镜头） */
+  const mw = 78, mh = mw * (H / W);
+  const mx = cw - mw - 10, my = 10;
+  ctx.fillStyle = 'rgba(255,255,255,.72)';
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(mx, my, mw, mh, 8) : ctx.rect(mx, my, mw, mh);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,.12)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  const sx = mw / W, sy = mh / H;
+  ctx.strokeStyle = mp.road;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.ellipse(mx + mw / 2, my + mh / 2, W * 0.34 * sx, H * 0.38 * sy, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#FFC93C';
+  for(const p of DRIVE.pickups){
+    if(p.hit) continue;
+    ctx.beginPath();
+    ctx.arc(mx + p.x * sx, my + p.y * sy, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#D85A30';
+  ctx.beginPath();
+  ctx.arc(mx + c.x * sx, my + c.y * sy, 3.2, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function quitDriveRun(){
+  cancelAnimationFrame(driveRAF);
+  DRIVE.phase = 'idle';
+  window.removeEventListener('keydown', DRIVE.keyHandler);
+  window.removeEventListener('keyup', DRIVE.keyUp);
+  go('drive');
+}
+function mapResult(res){
+  const mp = MAP_BY_ID[DRIVE.id];
+  const car = RIDE_BY_N[S.ride];
+  const nextMp = MAP_BY_ID[DRIVE.id + 1];
+  const canNext = nextMp && mapCondMet(nextMp.id);
+  showMask(`
+      <div class="big">${res.gotAll ? '🏁' : '🚗'}</div>
+      <h2>${res.gotAll ? `${mp.name} 通关！` : `${mp.name} 跑完啦`}</h2>
+      <div class="stars">${[0,1,2].map(i => `<span class="${i < res.stars ? '' : 'off'}">⭐</span>`).join('')}</div>
+      <div class="sub" style="margin:6px 0 0">
+        收集 <b>${res.got}/${res.total}</b> 颗单词星星 · 用时 <b>${res.elapsedSec.toFixed(1)}s</b>
+        ${car ? ` · 座驾 ${carBadge(car, 26)}` : ''}
+      </div>
+      <div class="coinrow">
+        <div class="coinbox">本次赚到<b>🪙 ${res.actual}</b></div>
+        <div class="coinbox">金币余额<b>🪙 ${S.coins}</b></div>
+        ${mapBestOf(DRIVE.id) ? `<div class="coinbox">最佳纪录<b>${mapBestOf(DRIVE.id)} 颗</b></div>` : ''}
+      </div>
+      ${res.gotAll && nextMp
+        ? `<div class="unlock">🔓 下一张地图：${nextMp.em} <b>${nextMp.name}</b><br>
+            <span>${canNext ? `🪙 ${nextMp.price} 金币可解锁` : `还需要通关 ${nextMp.need} 个模块`}</span></div>`
+        : ''}
+      ${res.gotAll ? '' : `<div class="sub" style="margin:8px 0 0">💡 星星没集齐也能赚金币，再跑一次试试全收！</div>`}
+      <div class="row">
+        <button class="btn sm" id="mAgain">再跑一次</button>
+        ${nextMp && canNext && res.gotAll ? `<button class="btn sm" id="mNext">下一张地图 →</button>` : ''}
+        <button class="btn sm ghost" id="mBack">🛣️ 回到地图</button>
+      </div>`, (box, close) => {
+    box.querySelector('#mAgain').addEventListener('click', () => { close(); startMapRun(DRIVE.id); });
+    box.querySelector('#mBack').addEventListener('click', () => { close(); quitDriveRun(); });
+    const nx = box.querySelector('#mNext');
+    if(nx) nx.addEventListener('click', () => { close(); startMapRun(DRIVE.id + 1); });
+  });
+}
+function sfxHonk(){ tone(440, .12, 0, .1, 'square'); tone(554, .16, .1, .09, 'square'); }
+
+/* =========================================================
+   v5：关卡会话调度（按玩法 key 挂载对应游戏）
+   ========================================================= */
+function mountSession(){
+  if(!SES){ go('map'); return; }
+  paintSession();
+  const root = $('#stage');
+  const k = SES.key;
+  if(k === 'find') mountFind(root);
+  else if(k === 'scram') mountPuzzle(root);
+  else if(k === 'bird') mountBird(root);
+  else if(k === 'tpr') mountSimon(root);
+  else if(k === 'pair') mountPair(root);
+  else if(k === 'pick') mountPick(root);
+  else if(k === 'listen') mountListen(root);
+  else if(k === 'sort') mountSort(root);
+  else if(k === 'mole') mountMole(root);
+  else if(k === 'boss') mountBoss(root);
+  else mountPick(root);
+}
+/* 按 emoji 去重，保证配对/选择题里不会出现两张一模一样的图 */
+function uniqEmoji(list){
+  const seen = new Set(), out = [];
+  for(const w of list){ if(seen.has(w.emoji)) continue; seen.add(w.emoji); out.push(w); }
+  return out;
+}
+
+/* =========================================================
+   游戏 5：🃏 记忆配对（图 ↔ 英文）
+   ========================================================= */
+const pairGame = {cards:[], open:[], locked:false};
+function mountPair(root){ pairGame.open = []; newPairRound(root); }
+
+function newPairRound(root){
+  if(SES && SES.done) return;
+  const g = pairGame;
+  const three = shuffle(uniqEmoji(needPool('w'))).slice(0, 3);
+  if(three.length < 2){ mountPick(root); return; }
+  g.cards = shuffle([
+    ...three.map(w => ({t:'e', w})),
+    ...three.map(w => ({t:'w', w}))
+  ]).map((c, i) => Object.assign({}, c, {id:i, gone:false}));
+  g.open = []; g.locked = false;
+  renderPair(root);
+}
+function renderPair(root){
+  const g = pairGame;
+  root.innerHTML = `
+    <div class="card">
+      <h2>🃏 记忆配对</h2>
+      <div class="sub">点开两张牌，把「图」和它的英文配成一对。范围：<b>${scopeLabel()}</b>。</div>
+      <div class="options" id="pgrid">
+        ${g.cards.map(c => {
+          const shown = c.gone || g.open.indexOf(c.id) >= 0;
+          const big = shown && c.t === 'w';
+          return `<button class="opt ${c.gone ? 'gone' : ''}" data-c="${c.id}">
+            <span class="e"${big ? ' style="font-size:24px"' : ''}>${shown ? (c.t === 'e' ? c.w.emoji : c.w.en) : '❓'}</span>
+          </button>`;
+        }).join('')}
+      </div>
+    </div>`;
+  root.querySelectorAll('.opt').forEach(b =>
+    b.addEventListener('click', () => tapPair(root, Number(b.dataset.c))));
+}
+function tapPair(root, id){
+  const g = pairGame;
+  if(g.locked) return;
+  const c = g.cards.find(x => x.id === id);
+  if(!c || c.gone || g.open.indexOf(id) >= 0) return;
+  g.open.push(id);
+  if(g.open.length < 2){ renderPair(root); return; }
+  const a = g.cards.find(x => x.id === g.open[0]);
+  const b = g.cards.find(x => x.id === g.open[1]);
+  if(a.w.id === b.w.id && a.t !== b.t){
+    a.gone = true; b.gone = true;
+    g.open = [];
+    sfxRight();
+    const ended = award(true);
+    record(a.w.id, a.w.en, true);
+    toast(pick(PRAISE)); speak(a.w.en);
+    renderPair(root);
+    if(ended) return;
+    if(g.cards.every(x => x.gone)) setTimeout(() => newPairRound(root), 850);
+  }else{
+    g.locked = true;
+    sfxTry(); award(false);
+    record(a.w.id, a.w.en, false);
+    renderPair(root);
+    setTimeout(() => {
+      g.open = []; g.locked = false;
+      if(!(SES && SES.done)) renderPair(root);
+    }, 780);
+  }
+}
+
+/* =========================================================
+   游戏 6：🎯 看图选词
+   ========================================================= */
+const pickGame = {target:null, locked:false};
+function mountPick(root){ newPickRound(root); }
+
+function newPickRound(root){
+  if(SES && SES.done) return;
+  const g = pickGame;
+  g.target = pickFresh(needPool('w'));
+  g.locked = false;
+  const opts = shuffle([g.target, ...optionsFor(distractorPool(), g.target, 3)]);
+  root.innerHTML = `
+    <div class="card">
+      <h2>🎯 看图选词</h2>
+      <div class="sub">看图片，点出正确的英文。范围：<b>${scopeLabel()}</b>。</div>
+      <div class="prompt"><div class="big">${g.target.emoji}</div><div class="q">这是什么？</div></div>
+      <div class="options" id="opts"></div>
+    </div>`;
+  const box = root.querySelector('#opts');
+  opts.forEach(w => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = `<span class="e" style="font-size:22px">${w.en}</span>`;
+    b.dataset.id = w.id;
+    b.addEventListener('click', () => answerPick(root, b, w));
+    box.appendChild(b);
+  });
+}
+function answerPick(root, btn, w){
+  const g = pickGame;
+  if(g.locked) return;
+  if(w.id === g.target.id){
+    g.locked = true;
+    btn.classList.add('right');
+    sfxRight(); record(g.target.id, g.target.en, true);
+    const ended = award(true);
+    toast(pick(PRAISE)); speak(g.target.en);
+    if(ended) return;
+    setTimeout(() => newPickRound(root), 1000);
+  }else{
+    btn.classList.add('wrong');
+    sfxTry(); award(false); record(g.target.id, g.target.en, false);
+    speak(g.target.en);
+    const c = root.querySelector(`.opt[data-id="${g.target.id}"]`);
+    if(c) c.classList.add('hint');
+    toast(pick(NUDGE));
+    setTimeout(() => { if(c) c.classList.remove('hint'); }, 1200);
+  }
+}
+
+/* =========================================================
+   游戏 7：🎧 听音选中文
+   ========================================================= */
+const listenGame = {target:null, locked:false};
+function mountListen(root){ newListenRound(root); }
+
+function newListenRound(root){
+  if(SES && SES.done) return;
+  const g = listenGame;
+  g.target = pickFresh(needPool('w'));
+  g.locked = false;
+  const opts = shuffle([g.target, ...optionsFor(distractorPool(), g.target, 3)]);
+  root.innerHTML = `
+    <div class="card">
+      <h2>🎧 听音选中文</h2>
+      <div class="sub">听单词，点出它的中文意思。范围：<b>${scopeLabel()}</b>。</div>
+      <div class="prompt"><div class="big">🎧</div><div class="q">点下面按钮再听一次</div></div>
+      <div class="center" style="margin-bottom:13px">
+        <button class="btn ghost" id="again">🔊 再听一次</button>
+      </div>
+      <div class="options" id="opts"></div>
+    </div>`;
+  const box = root.querySelector('#opts');
+  opts.forEach(w => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = `<span class="e" style="font-size:20px">${w.zh}</span>`;
+    b.dataset.id = w.id;
+    b.addEventListener('click', () => answerListen(root, b, w));
+    box.appendChild(b);
+  });
+  root.querySelector('#again').addEventListener('click', () => speak(g.target.en));
+  setTimeout(() => speak(g.target.en), 260);
+}
+function answerListen(root, btn, w){
+  const g = listenGame;
+  if(g.locked) return;
+  if(w.id === g.target.id){
+    g.locked = true;
+    btn.classList.add('right');
+    sfxRight(); record(g.target.id, g.target.en, true);
+    const ended = award(true);
+    toast(`🎉 ${g.target.en} = ${g.target.zh}`); speak(g.target.en);
+    if(ended) return;
+    setTimeout(() => newListenRound(root), 1200);
+  }else{
+    btn.classList.add('wrong');
+    sfxTry(); award(false); record(g.target.id, g.target.en, false);
+    speak(g.target.en);
+    const c = root.querySelector(`.opt[data-id="${g.target.id}"]`);
+    if(c) c.classList.add('hint');
+    toast(pick(NUDGE));
+    setTimeout(() => { if(c) c.classList.remove('hint'); }, 1200);
+  }
+}
+
+/* =========================================================
+   游戏 8：🔤 字母排序（打乱的字母按顺序拼回来）
+   ========================================================= */
+const sortGame = {word:null, slot:[], tiles:[], locked:false};
+function mountSort(root){ newSortRound(root); }
+
+function newSortRound(root){
+  if(SES && SES.done) return;
+  const g = sortGame;
+  const pool = needPool('w').filter(w => /^[a-z]+$/.test(w.en) && w.en.length >= 3);
+  g.word = pickFresh(pool.length ? pool : SPELLABLE());
+  g.slot = Array(g.word.en.length).fill('');
+  g.tiles = shuffle(g.word.en.split('')).map((ch, i) => ({ch, id:i, used:false}));
+  g.locked = false;
+  renderSort(root);
+  setTimeout(() => speak(g.word.en), 280);
+}
+function renderSort(root){
+  const g = sortGame;
+  root.innerHTML = `
+    <div class="card">
+      <h2>🔤 字母排序</h2>
+      <div class="sub">听单词，把打乱的字母按顺序点回来（中文：<b>${g.word.zh}</b>）。范围：${scopeLabel()}。</div>
+      <div class="prompt"><div class="big">${g.word.emoji}</div><div class="q">${g.word.zh}</div></div>
+      <div class="center" style="margin-bottom:12px">
+        <button class="btn ghost sm" id="again">🔊 再听一次</button>
+      </div>
+      <div class="blanks">${g.slot.map(ch => `<div class="blank ${ch ? '' : 'on'}">${ch}</div>`).join('')}</div>
+      <div class="tiles" id="tiles">
+        ${g.tiles.map(t => `<button class="tile ${t.used ? 'gone' : ''}" data-id="${t.id}">${t.ch}</button>`).join('')}
+      </div>
+      <div class="row" style="justify-content:center;margin-top:12px">
+        <button class="btn sm ghost" id="undo">← 退一格</button>
+      </div>
+    </div>`;
+  root.querySelector('#again').addEventListener('click', () => speak(g.word.en));
+  root.querySelector('#undo').addEventListener('click', () => {
+    if(g.locked) return;
+    const last = g.slot.lastIndexOf('');       /* 找最后一个已填位置 */
+    let pos = -1;
+    for(let i = g.slot.length - 1; i >= 0; i--){ if(g.slot[i]){ pos = i; break; } }
+    if(pos < 0) return;
+    const ch = g.slot[pos];
+    const t = g.tiles.filter(x => x.used && x.ch === ch).pop();
+    if(t) t.used = false;
+    g.slot[pos] = '';
+    renderSort(root);
+  });
+  root.querySelectorAll('#tiles .tile').forEach(b =>
+    b.addEventListener('click', () => tapSort(root, Number(b.dataset.id))));
+}
+function tapSort(root, id){
+  const g = sortGame;
+  if(g.locked) return;
+  const t = g.tiles.find(x => x.id === id);
+  if(!t || t.used) return;
+  const pos = g.slot.indexOf('');
+  if(pos < 0) return;
+  t.used = true;
+  g.slot[pos] = t.ch;
+  sfxRight();
+  if(g.slot.indexOf('') < 0){
+    g.locked = true;
+    record(g.word.id, g.word.en, true);
+    const ended = award(true);
+    toast('🎉 ' + g.word.en); speak(g.word.en);
+    if(ended) return;
+    setTimeout(() => newSortRound(root), 1300);
+    return;
+  }
+  renderSort(root);
+}
+
+/* =========================================================
+   游戏 9：💥 打地鼠（听到目标词就点它）
+   ========================================================= */
+const moleGame = {target:null, cards:[], locked:false};
+function mountMole(root){ newMoleRound(root); }
+
+function newMoleRound(root){
+  if(SES && SES.done) return;
+  const g = moleGame;
+  g.target = pickFresh(needPool('w'));
+  g.cards = shuffle([g.target, ...optionsFor(distractorPool(), g.target, 4)]);
+  g.locked = false;
+  root.innerHTML = `
+    <div class="card">
+      <h2>💥 打地鼠</h2>
+      <div class="sub">听单词，在地洞里点出它（中文：<b>${g.target.zh}</b>）。范围：<b>${scopeLabel()}</b>。</div>
+      <div class="prompt"><div class="big">🐹</div><div class="q">听清楚再点，别打到别的地鼠哦</div></div>
+      <div class="center" style="margin-bottom:13px">
+        <button class="btn ghost" id="again">🔊 再听一次</button>
+      </div>
+      <div class="pool" id="holes">
+        ${g.cards.map(w => `<button class="chip poolcard" data-id="${w.id}"
+          style="font-size:${w.en.length > 9 ? 12 : 15}px">${w.en}</button>`).join('')}
+      </div>
+    </div>`;
+  root.querySelector('#again').addEventListener('click', () => speak(g.target.en));
+  root.querySelectorAll('#holes .chip').forEach(b =>
+    b.addEventListener('click', () => tapMole(root, b, b.dataset.id)));
+  setTimeout(() => speak(g.target.en), 260);
+}
+function tapMole(root, btn, id){
+  const g = moleGame;
+  if(g.locked) return;
+  const w = g.cards.find(x => x.id === id);
+  if(!w) return;
+  if(w.id === g.target.id){
+    g.locked = true;
+    btn.classList.add('right');
+    btn.style.background = 'linear-gradient(135deg,var(--green),#DFF6E8)';
+    sfxRight(); record(g.target.id, g.target.en, true);
+    const ended = award(true);
+    toast('🎉 打中啦！' + g.target.en); speak(g.target.en);
+    if(ended) return;
+    setTimeout(() => newMoleRound(root), 1150);
+  }else{
+    btn.classList.add('wrong');
+    sfxTry(); award(false); record(g.target.id, g.target.en, false);
+    speak(g.target.en);
+    toast(pick(NUDGE));
+    setTimeout(() => btn.classList.remove('wrong'), 600);
+  }
+}
+
+/* =========================================================
+   游戏 10：👑 混合挑战（前面 9 种题型随机来）
+   ========================================================= */
+const BOSS_KEYS = ['find','pair','bird','pick','scram','listen','tpr','sort','mole'];
+function mountBoss(root){
+  if(SES && SES.done) return;
+  const usable = BOSS_KEYS.filter(k => {
+    if((k === 'bird' || k === 'sort') && !stageSpellPool(SES.m).length) return false;
+    if(k === 'pair' && uniqEmoji(needPool('w')).length < 3) return false;
+    if(k === 'scram' && !poolSentences().length) return false;
+    return true;
+  });
+  const key = pick(usable.length ? usable : ['pick']);
+  SES.key = key;
+  SES.g = GAMES.find(x => x.key === key) || GAMES[0];
+  paintSession();
+  mountSession();
+}
+
+/* =========================================================
+   🔤 单词表（家长核对用）
+   ========================================================= */
+let listQuery = '';
+
+function mountList(root){
+  const draft = WORDS.filter(w => !w.book).length;
+  const mods = modulesInScope();
+  const lockedMods = MODULES.filter(m => !isUnlocked(m.n)).length;
+  const lockedWords = WORDS.length - unlockedWordCount();
+  root.innerHTML = `
+    <div class="card">
+      <h2>🔤 单词表</h2>
+      <div class="sub">
+        共 <b>${WORDS.length}</b> 词 / <b>${SENTENCES.length}</b> 句，覆盖 <b>${MODULES.length}</b> 个模块（M1–M100）。
+        当前范围：<b>${scopeLabel()}</b> —— ${mods.length} 个模块 / ${poolWords().length} 词。<br>
+        <span class="tag book">已核对</span> 来自你仓库 curriculum.js；
+        <span class="tag draft">待核对</span> 是按模块主题补的（<b>${draft}</b> 词），
+        <b>合并进正式课程前必须对着纸质书补 sourcePage</b>。
+      </div>
+      ${lockedMods ? `<div class="note-lock">🔒 还有 <b>${lockedMods}</b> 个模块 / <b>${lockedWords}</b> 个单词没解锁 —— 一关一关通过之后会逐个出现在这里。想提前翻看，用首页底部的「家长模式」。</div>` : ''}
+      <input class="search" id="q" type="search" placeholder="🔍 搜单词 / 中文（例如 one、一、M3）" value="${listQuery}">
+      <div class="row" style="margin-bottom:12px">
+        <button class="btn sm ghost" id="q-all">朗读当前范围（${poolWords().length} 词）</button>
+      </div>
+      <div class="tablewrap" id="tw"></div>
+    </div>
+    <div class="card">
+      <h2>💬 句型表（当前范围 ${poolSentences().length} 句）</h2>
+      <div class="tablewrap" id="sw"></div>
+    </div>`;
+
+  const q = root.querySelector('#q');
+  q.addEventListener('input', () => { listQuery = q.value; paintList(root); });
+  paintList(root);
+
+  root.querySelector('#q-all').addEventListener('click', () => {
+    const list = poolWords();
+    list.forEach((w,i) => setTimeout(() => speak(w.en), i * 1100));
+    toast(`开始朗读 ${list.length} 个单词`);
+  });
+}
+
+function matchQuery(text){ return !listQuery || text.toLowerCase().includes(listQuery.trim().toLowerCase()); }
+
+function paintList(root){
+  const tw = root.querySelector('#tw');
+  const sw = root.querySelector('#sw');
+  tw.innerHTML = ''; sw.innerHTML = '';
+  const q = listQuery.trim().toLowerCase();
+
+  let shownWords = 0;
+  const mods = modulesInScope();
+  let lastLvl = 0;
+  mods.forEach(n => {
+    const info = modInfo(n);
+    const lvl = lvlOf(n);
+    const list = WORDS.filter(w => w.m === n && (!q || matchQuery(w.en) || matchQuery(w.zh) || matchQuery('m'+n)));
+    if(!list.length) return;
+    if(lvl !== lastLvl){
+      lastLvl = lvl;
+      const L = LEVELS.find(x => x.k === lvl);
+      const h = document.createElement('div');
+      h.className = 'lvhdr';
+      h.textContent = `L${L.k} ${L.emoji} ${L.name}（${L.range}）`;
+      tw.appendChild(h);
+    }
+    const g = document.createElement('div');
+    g.innerHTML = `<div class="grp">M${n} ${info.title}<span class="n">${list.length} 词</span></div>`;
+    list.forEach(w => g.appendChild(wordRow(w)));
+    tw.appendChild(g);
+    shownWords += list.length;
+  });
+  if(!shownWords){
+    tw.innerHTML = `<div class="empty-hint">${mods.length ? '没有匹配的单词' : '这个范围还没有内容'}</div>`;
+  }
+
+  const sl = SENTENCES.filter(s => modulesInScope().includes(s.m) &&
+    (!q || matchQuery(s.en) || matchQuery(s.zh) || matchQuery('m'+s.m)));
+  sl.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'wrow';
+    d.innerHTML = `<span class="en" style="min-width:auto;flex:1">${s.en}</span>
+      <span class="zh">${s.zh}</span>
+      <span class="tag ${s.book?'book':'draft'}">${s.book?'已核对':'待核对'}</span>
+      <button class="say">🔊</button>`;
+    d.querySelector('.say').addEventListener('click', () => speak(s.en));
+    sw.appendChild(d);
+  });
+  if(!sl.length) sw.innerHTML = '<div class="empty-hint">没有匹配的句型</div>';
+}
+
+function wordRow(w){
+  const d = document.createElement('div');
+  d.className = 'wrow';
+  d.innerHTML = `<span class="e"${w.emoji.length > 3 ? ' style="font-size:12px"' : w.emoji.length > 2 ? ' style="font-size:16px"' : ''}>${w.emoji}</span>
+    <span class="en">${w.en}</span>
+    <span class="zh">${w.zh}</span>
+    <span class="tag ${w.book?'book':'draft'}">${w.book?'已核对':'待核对'}</span>
+    <button class="say">🔊</button>`;
+  d.querySelector('.say').addEventListener('click', () => speak(w.en));
+  return d;
+}
+
+/* =========================================================
+   首页
+   ========================================================= */
+function mountHome(root){
+  const entries = Object.entries(S.log);
+  const weak = entries.filter(([,v]) => v.wrong > 0).sort((a,b) => b[1].wrong - a[1].wrong).slice(0, 10);
+  const draft = WORDS.filter(w => !w.book).length;
+  const cur = currentModule(), cp = progressOf(cur);
+  const done = clearedCount(), openWords = unlockedWordCount();
+  const riding = RIDE_BY_N[S.ride] || null;
+  const sNext = nextStageIn(cur) || STAGES_PER_MOD;
+  const gNext = stageGame(cur, sNext);
+
+  root.innerHTML = `
+    <div class="card">
+      <h2>🏠 英语闯关实验室 v6</h2>
+      <div class="sub">
+        <b>${MODULES.length}</b> 个模块 × <b>${STAGES_PER_MOD}</b> 关 × <b>${GAMES.length}</b> 种玩法，
+        共 <b>${WORDS.length}</b> 词 + <b>${SENTENCES.length}</b> 句。
+        闯关赚 🪙 金币，通关一个模块就能把它那辆专属交通工具换回家（共 ${RIDES.length} 辆）。
+      </div>
+      <div class="coinrow" style="margin:12px 0 14px">
+        <div class="coinbox">金币<b>🪙 ${S.coins}</b></div>
+        <div class="coinbox">星星<b>⭐ ${allStars()}</b></div>
+        <div class="coinbox">车库<b>🚗 ${ownedCount()}/${RIDES.length}</b></div>
+        <div class="coinbox">地图<b>🛣️ ${mapsCleared()}/${MAPS.length}</b></div>
+      </div>
+      <div class="row">
+        <button class="btn" data-go="map">🗺️ 继续闯关：M${cur} 第 ${sNext} 关</button>
+        <button class="btn ghost" data-go="garage">🚗 去车库</button>
+        <button class="btn ghost" data-go="drive">🛣️ 开车兜风</button>
+        <button class="btn ghost" data-go="list">🔤 单词表</button>
+      </div>
+      <div class="sub" style="margin:12px 0 0">
+        ${riding ? `🚗 当前座驾：<b>${riding.name}</b>（换车去车库点一下就行）`
+                 : '🚗 还没有座驾 —— 通关一个模块后去车库换一辆吧'}
+        ${ownedCount() ? `<br>🛣️ 换来的车能开进地图兜风，撞到路上的单词星星会读出英文和中文，顺便把单词练了。` : ''}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🗺️ 闯关进度</h2>
+      <div class="sub">
+        ${S.free ? '🔓 <b>家长模式已开启</b>：全部模块和单词都已解锁。' :
+          `每个模块 <b>${STAGES_PER_MOD}</b> 个关卡，一关一种玩法，一关一关往前打。
+           ${STAGES_PER_MOD} 关全过就解锁下一模块，以及本模块那辆专属交通工具。`}
+      </div>
+      <div class="pbar"><i style="width:${S.free ? 100 : done}%"></i></div>
+      <div class="log">
+        <div class="l"><span class="en">已通关模块</span><span>
+          <span class="badge">${done} / ${MODULES.length}</span>
+          ${done === MODULES.length ? '<span class="badge">🏆 全通关</span>' : ''}</span></div>
+        <div class="l"><span class="en">当前模块</span><span>
+          <span class="badge">M${cur} ${modInfo(cur).title}</span>
+          <span class="badge warn">${cp.got} / ${cp.total} 关</span></span></div>
+        <div class="l"><span class="en">下一关</span><span>
+          <span class="badge">第 ${sNext} 关 ${gNext.ic} ${gNext.name}</span>
+          <span class="badge">⭐ ${moduleStars(cur)} / ${STAGES_PER_MOD * 3}</span></span></div>
+        <div class="l"><span class="en">金币 / 座驾</span><span>
+          <span class="badge">🪙 ${S.coins}</span>
+          <span class="badge">🚗 ${ownedCount()} / ${RIDES.length} 辆</span></span></div>
+        <div class="l"><span class="en">已解锁词汇</span><span>
+          <span class="badge">${openWords} 词</span>
+          <span class="badge warn">🔒 还有 ${WORDS.length - openWords} 词</span></span></div>
+        <div class="l"><span class="en">已解锁模块</span><span>
+          <span class="badge">M1 – M${maxUnlocked()}</span></span></div>
+        <div class="l"><span class="en">累计答对</span><span>
+          <span class="badge">${S.stars} 次</span>
+          <span class="badge">共 ${Object.keys(S.log).length} 个词/句练过</span></span></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" data-go-cur="1">▶️ 继续闯关：M${cur} 第 ${sNext} 关</button>
+        <button class="btn sm ghost" data-go-cur-list="1">🔤 看这一关的单词</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📚 词库构成（5 级 × 20 模块）</h2>
+      <div class="log">
+        ${LEVELS.map(L => {
+          const w = levelWords(L.k), s = levelSentences(L.k);
+          const bk = WORDS.filter(x => lvlOf(x.m) === L.k && x.book).length;
+          const open = levelUnlocked(L.k);
+          const cdone = MODULES.filter(m => lvlOf(m.n) === L.k && isCleared(m.n)).length;
+          return `<div class="l">
+            <span class="en">${open ? (cdone === MODS_PER_LEVEL ? '✅' : L.emoji) : '🔒'} L${L.k} ${L.name} <span style="font-weight:400;color:#9A8A9A">${L.range}</span></span>
+            <span>
+              ${open ? `<span class="badge">${cdone}/20 模块</span>` : '<span class="badge warn">未解锁</span>'}
+              <span class="badge">${w} 词</span>
+              <span class="badge">${s} 句</span>
+              ${bk ? `<span class="badge">已核对 ${bk}</span>` : ''}
+            </span>
+          </div>`;
+        }).join('')}
+        <div class="l">
+          <span class="en">合计</span>
+          <span><span class="badge">${WORDS.length} 词</span><span class="badge">${SENTENCES.length} 句</span>
+          <span class="badge warn">待核对 ${draft} 词</span></span>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        ${LEVELS.map(L => {
+          const open = levelUnlocked(L.k);
+          return `<button class="btn sm ghost" data-lvl="${L.k}">${open ? '' : '🔒 '}L${L.k} ${L.name}</button>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📋 本轮练习</h2>
+      <div class="sub">当前范围 <b>${scopeLabel()}</b>：${poolWords().length} 词 / ${poolSentences().length} 句。</div>
+      <div class="log">
+        ${entries.length ? entries.slice().reverse().slice(0,14).map(([id,v]) => `
+          <div class="l"><span class="en">${v.label}</span><span>
+            <span class="badge ${v.wrong?'warn':''}">对 ${v.right}</span>
+            ${v.wrong ? `<span class="badge warn">错 ${v.wrong}</span>` : ''}
+          </span></div>`).join('') : '<div class="l"><span>还没开始玩～</span></div>'}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 明天优先复习</h2>
+      <div class="sub">按错误次数排序，可直接喂给 src/mastery.js 的 needs-help 队列。</div>
+      <div class="log">
+        ${weak.length ? weak.map(([id,v]) => `
+          <div class="l"><span class="en">${v.label}</span><span class="badge warn">错 ${v.wrong} 次</span></div>`).join('')
+        : '<div class="l"><span>目前没有薄弱的，继续保持 ✨</span></div>'}
+      </div>
+      ${weak.length ? '<div class="row" style="margin-top:12px"><button class="btn sm" data-go-weak="1">⚠️ 只练这些</button></div>' : ''}
+    </div>
+
+    <div class="card center">
+      <div class="sub" style="margin-bottom:10px">家长设置</div>
+      <div class="row" style="justify-content:center">
+        <button class="btn sm ghost" id="free">${S.free ? '🔒 回到闯关模式' : '🔓 家长模式：解锁全部'}</button>
+        <button class="btn sm ghost" id="reset">清空实验室数据</button>
+      </div>
+      <div class="sub" style="margin:10px 0 0">
+        孩子卡住、或要临时查后面模块的内容时用「家长模式」；关掉就回到闯关进度。
+      </div>
+    </div>`;
+
+  root.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
+  root.querySelectorAll('[data-lvl]').forEach(b => b.addEventListener('click', () => {
+    const k = Number(b.dataset.lvl);
+    if(!levelUnlocked(k)){ toast(`L${k} 还没解锁，先闯前面的关吧～`); return; }
+    setScope('L'+k); go('list');
+  }));
+  const wb = root.querySelector('[data-go-weak]');
+  if(wb) wb.addEventListener('click', () => { setScope('weak'); startFreePlay('find', currentModule()); });
+  const cb = root.querySelector('[data-go-cur]');
+  if(cb) cb.addEventListener('click', () => { setScope('m' + currentModule()); go('map'); });
+  const cl = root.querySelector('[data-go-cur-list]');
+  if(cl) cl.addEventListener('click', () => { setScope('m' + currentModule()); go('list'); });
+  root.querySelector('#free').addEventListener('click', () => {
+    if(!S.free && !confirm('解锁全部 100 个模块？孩子就能随便跳到任意关卡和单词了。')) return;
+    S.free = !S.free;
+    /* 从家长模式回到闯关：如果当前范围已被锁住，退回「全部已解锁」 */
+    if(!S.free && ((scope[0] === 'm' && !isUnlocked(Number(scope.slice(1)))) ||
+                   (scope[0] === 'L' && !levelUnlocked(Number(scope.slice(1)))))){
+      scope = 'all'; S.scope = 'all';
+    }
+    save(); paintChips(); paintTop(); mountHome(root);
+    toast(S.free ? '已解锁全部模块' : '已回到闯关模式');
+  });
+  root.querySelector('#reset').addEventListener('click', () => {
+    if(!confirm('清空实验室数据？星星、金币、车库、练习记录和闯关进度都会归零，从 M1 重新开始。')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    const mask = document.getElementById('mask');
+    if(mask) mask.remove();
+    S = load(); scope = 'm1'; levelView = 1; SES = null; garageFilter = 'all';
+    paintSession(); paintChips(); paintTop(); mountHome(root);
+  });
+}
+
+/* =========================================================
+   范围选择器（两级）
+   ========================================================= */
+function paintChips(){
+  /* 第一排：全部已解锁 + 5 个级别 + 只练错过的 */
+  const lvBox = $('#lvChips');
+  lvBox.innerHTML = '';
+  lvBox.appendChild(mkChip('all', `全部已解锁<i>${unlockedWordCount()}</i>`, scope === 'all', () => setScope('all')));
+  LEVELS.forEach(L => {
+    const open = levelUnlocked(L.k);
+    const done = MODULES.filter(m => lvlOf(m.n) === L.k && isCleared(m.n)).length;
+    const icon = !open ? '🔒' : done === MODS_PER_LEVEL ? '✅' : L.emoji;
+    const b = mkChip('L'+L.k,
+      `${icon} L${L.k} ${L.name}<i>${open ? levelWords(L.k) : 0}</i>`,
+      scope === 'L'+L.k, () => setScope('L'+L.k));
+    if(!open) b.classList.add('lock');
+    lvBox.appendChild(b);
+  });
+  lvBox.appendChild(mkChip('weak', `⚠️ 只练错过的<i>${weakCount()}</i>`, scope === 'weak', () => setScope('weak')));
+
+  /* 第二排：当前浏览级别的 20 个模块 */
+  const modBox = $('#modChips');
+  modBox.innerHTML = '';
+  const L = LEVELS.find(x => x.k === levelView);
+  modBox.appendChild(mkChip('L'+L.k, `本级全部<i>${levelWords(L.k)}</i>`,
+    scope === 'L'+L.k, () => setScope('L'+L.k), true));
+  const now = currentModule();
+  MODULES.filter(m => lvlOf(m.n) === levelView).forEach(m => {
+    const open = isUnlocked(m.n), done = isCleared(m.n);
+    const icon = !open ? '🔒 ' : done ? '✅ ' : (m.n === now ? '👉 ' : '');
+    const tail = open ? `<i>${stagesDoneIn(m.n)}/${STAGES_PER_MOD}关</i>` : '';
+    const b = mkChip('m'+m.n, `${icon}<b>M${m.n}</b>${m.title}${tail}`,
+      scope === 'm'+m.n, () => setScope('m'+m.n), true);
+    if(!open) b.classList.add('lock');
+    modBox.appendChild(b);
+  });
+}
+function mkChip(key, html, on, onClick, mini){
+  const b = document.createElement('button');
+  b.className = 'schip' + (mini ? ' mini' : '') + (on ? ' on' : '');
+  b.dataset.k = key;
+  b.innerHTML = html;
+  b.addEventListener('click', onClick);
+  return b;
+}
+function setScope(k){
+  /* 闯关门控：锁住的模块 / 级别点不动 */
+  if(k[0] === 'm'){
+    const n = Number(k.slice(1));
+    if(!isUnlocked(n)){ toast(`先通关 M${n - 1}，才能解锁这一关哦～`); return; }
+  }else if(k[0] === 'L' && !levelUnlocked(Number(k.slice(1)))){
+    toast('这一级还没解锁，先闯前面的关吧～'); return;
+  }
+  scope = k; S.scope = k; save();
+  if(k[0] === 'L') levelView = Number(k.slice(1));
+  else if(k[0] === 'm') levelView = lvlOf(Number(k.slice(1)));
+  paintChips(); paintTop();
+  const cur = document.querySelector('.tab.on');
+  if(cur && cur.dataset.g === 'list') mountList($('#stage'));
+}
+function restoreScope(){
+  const ok = k => k === 'all' || k === 'weak' || /^L[1-5]$/.test(k) || /^m([1-9]|[1-9][0-9]|100)$/.test(k);
+  /* 第一次进来默认就落在当前关卡上，孩子一点开游戏就是这一关的题 */
+  let s = ok(S.scope) ? S.scope : 'm' + currentModule();
+  /* 存档里的范围可能已经被锁（比如中途上锁 / 家长模式关掉）→ 退回「全部已解锁」 */
+  if(s[0] === 'm' && !isUnlocked(Number(s.slice(1)))) s = 'all';
+  if(s[0] === 'L' && !levelUnlocked(Number(s.slice(1)))) s = 'all';
+  /* 上次停在已经通关的模块上 → 自动前进到当前关卡，保持闯关节奏 */
+  if(!S.free && s[0] === 'm' && isCleared(Number(s.slice(1)))) s = 'm' + currentModule();
+  scope = s; S.scope = s;
+  levelView = scope[0] === 'L' ? Number(scope.slice(1))
+             : scope[0] === 'm' ? lvlOf(Number(scope.slice(1))) : currentLevelView();
+}
+/* 默认显示当前关卡所在级别，孩子一进来就看到自己那一关 */
+function currentLevelView(){ return lvlOf(currentModule()); }
+
+/* =========================================================
+   路由
+   ========================================================= */
+function go(name){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.g === name));
+  const root = $('#stage');
+  ac();                                  /* 任何导航手势都用来解锁音频 */
+  if(name !== 'play') SES = null;        /* 离开游戏页 = 本次关卡会话结束 */
+  paintSession();                        /* 顺便把顶部关卡条清掉 */
+  if(name === 'home') mountHome(root);
+  else if(name === 'map') mountMap(root);
+  else if(name === 'garage') mountGarage(root);
+  else if(name === 'drive') mountDrive(root);
+  else if(name === 'drive-run') mountDriveRun(root);
+  else if(name === 'list') mountList(root);
+  else if(name === 'play') mountSession();
+  /* 离开驾驶页就把动画和键盘监听彻底停掉，免得后台空转 */
+  if(name !== 'drive-run' && DRIVE.phase !== 'idle'){
+    cancelAnimationFrame(driveRAF);
+    DRIVE.phase = 'idle';
+    window.removeEventListener('keydown', DRIVE.keyHandler);
+    window.removeEventListener('keyup', DRIVE.keyUp);
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => go(t.dataset.g)));
+
+restoreScope();
+paintChips();
+paintTop();
+go('home');
+
+/* ---------- PWA：离线可玩 + 可安装到主屏 ---------- */
+/* 只在 http(s) 下注册；用 file:// 直接双击打开时安静跳过 */
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+  /* 有新版本就提示一次（不打断游戏） */
+  navigator.serviceWorker.addEventListener('message', e => {
+    if(e.data && e.data.type === 'updated'){
+      try{ toast('有新版本啦，关掉重开就会加载 ✨'); }catch(_){}
+    }
+  });
+}
+/* iOS 加到主屏后从主屏启动时，隐藏浏览器态的滚动回弹 */
+document.addEventListener('touchmove', e => {
+  if(e.touches.length > 1) e.preventDefault();
+}, {passive:false});
+</script>
+</body>
+</html>
